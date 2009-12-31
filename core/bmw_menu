@@ -1,0 +1,38 @@
+#!/bin/sh
+
+ShowMenu()
+{
+	local i=1
+	local count
+	local choice
+
+	echo
+	echo 
+	echo ${1}
+	echo
+	shift
+
+	count="$#"
+
+	while test $# -ge 1
+	do
+		printf "%6d). %s\n" "${i}" "$1"
+		((i++))
+		shift
+	done
+
+	printf "     x). Exit\n"
+	echo 
+
+	echo -n "Your choice[1-${count}]? "
+	read choice
+
+	if [ -z `echo "${choice}"|sed -n '/[[:digit:]]/!p'` ];then
+		return ${choice}
+	elif [ "${choice}" = "x" -o "${choice}" = "X"  -o "${choice}" = "q"  -o "${choice}" = "Q" ]; then
+		return 0
+	else
+		return -1
+	fi
+}
+

@@ -1,0 +1,193 @@
+#!/bin/sh
+# 
+# http://maxwit.googlecode.com
+#
+# Authors:
+#     Conke Hu   <conke@maxwit.com>
+#     Tiger Yu   <tiger@maxwit.com>
+#     Fleya Hou  <fleya@maxwit.com>
+#
+
+
+# Toolchain packages:
+MWP_KERNEL="linux-2.6.29.4"
+
+# utils packages:
+MWP_PATCH="patch-2.5.9"
+MWP_M4="m4-1.4.13"
+MWP_LIBTOOL="libtool-2.2.6a"
+MWP_FLEX="flex-2.5.35"
+MWP_BISON="bison-2.4.1"
+MWP_SED="sed-4.1.5"
+MWP_GAWK="gawk-3.1.6"
+MWP_GETTEXT="gettext-0.17"
+MWP_TEXINFO="texinfo-4.13"
+
+MWP_GMP="gmp-4.2.4"
+MWP_MPFR="mpfr-2.4.1"
+
+# toolchain packags:
+GLIBC_VER="2.9"
+MWP_BINUTILS="binutils-2.19.1"
+MWP_GCC="gcc-4.4.0"
+MWP_GLIBC="glibc-${GLIBC_VER}"
+MWP_GLIBC_PORTS="glibc-ports-${GLIBC_VER}"
+
+
+# MaxWit Linux packages:
+MWP_BASH="bash-4.0"
+MWP_COREUTILS="coreutils-7.2"
+MWP_DEBIANUTILS="debianutils_2.30"
+MWP_ALSA_LIB="alsa-lib-1.0.16"
+MWP_ALSA_UTILS="alsa-utils-1.0.16"
+MWP_FBV="fbv-1.0b"
+MWP_DFB="DirectFB-1.2.8"
+MWP_DFB_EX="DirectFB-examples-1.2.0"
+MWP_MPG123="mpg123-0.66"
+MWP_MADPLAY="madplay-0.15.2b"
+MWP_MPLAYER="MPlayer-1.0rc2"
+MWP_FAAD2="faad2-2.7"
+MWP_LIBUSB="libusb-0.1.12"
+MWP_USB_UTILS="usbutils-0.81"
+MWP_ZLIB="zlib-1.2.3"
+MWP_FREETYPE="freetype-2.3.7"
+MWP_FONTCONFIG="fontconfig-2.6.0"
+MWP_LIBPNG="libpng-1.2.35"
+MWP_JPEG="jpegsrc.v6b"
+MWP_LIBUNGIF="libungif-4.1.4"
+MWP_TIFF="tiff-3.8.2"
+MWP_TSLIB="tslib-1.0"
+MWP_NCURSES="ncurses-5.6"
+MWP_LIBMAD="libmad-0.15.1b"
+MWP_LIBID3TAG="libid3tag-0.15.1b"
+MWP_SDL="SDL-1.2.13"
+MWP_SDL_IMAGE="SDL_image-1.2.6"
+MWP_SDL_TTF="SDL_ttf-2.0.9"
+MWP_SDL_MIXER="SDL_mixer-1.2.8"
+MWP_GPM="gpm-1.20.5"
+MWP_MESA_GLUT="MesaGLUT-7.0.4"
+MWP_MESA_DEMO="MesaDemos-7.0.4"
+MWP_MESA_LIB="MesaLib-7.0.4"
+MWP_QTOPIA="qtopia-opensource-src-4.3.2 "
+MWP_QTE="qt-embedded-linux-opensource-src-4.4.1"
+MWP_BUSYBOX="busybox-1.14.1"
+MWP_UDEV="udev-136"
+MWP_LXDOOM="lxdoom-1.4.4"
+MWP_DOOM_DATA="doom-1.8.wad"
+MWP_PRBOOM="prboom-2.5.0"
+MWP_PERL="perl-5.10.0"
+MWP_PYTHON="Python-2.6.1"
+MWP_UTIL_LINUX="util-linux-ng-2.15"
+MWP_SYSVINIT="sysvinit-2.86"
+MWP_UUID="uuid-1.6.1"
+MWP_VIM="vim-7.2"
+MWP_E2FS_LIBS="e2fsprogs-libs-1.41.5"
+MWP_E2FS="e2fsprogs-1.41.5"
+MWP_LIBXML2="libxml2-2.7.2"
+MWP_OPENSSL="openssl-0.9.8j"
+MWP_DBUS="dbus-1.2.1"
+MWP_MODULE_INIT="module-init-tools-3.9"
+
+
+# sbox2 packages
+SBP_LIBTOOL="libtool-1.5.26"
+
+
+# utils packages:
+MWP_PATCH="patch-2.5.9"
+MWP_ZLIB="zlib-1.2.3"
+MWP_BASH="bash-4.0"
+MWP_COREUTILS="coreutils-7.2"
+MWP_DEBUTILS="debianutils_2.30"
+MWP_GREP="grep-2.5.4"
+MWP_PERL="perl-5.10.0"
+MWP_AUTOCONF="autoconf-2.63"
+MWP_AUTOMAKE="automake-1.10"
+MWP_NCURSES="ncurses-5.7"
+MWP_M4="m4-1.4.13"
+MWP_FLEX="flex-2.5.35"
+MWP_BISON="bison-2.4.1"
+MWP_SED="sed-4.1.5"
+MWP_GAWK="gawk-3.1.6"
+MWP_GETTEXT="gettext-0.17"
+MWP_TEXINFO="texinfo-4.13"
+MWP_PKG_CONFIG="pkg-config-0.23"
+
+# sbox & qemu packages:
+MWP_SBOX2="sbox2-2.0"
+MWP_QEMU="qemu-0.10.2"
+
+
+PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
+	http://ftp.gnu.org/gnu/patch/${MWP_PATCH}.tar.gz \
+	http://ftp.gnu.org/gnu/m4/${MWP_M4}.tar.bz2 \
+	http://ftp.gnu.org/gnu/libtool/${MWP_LIBTOOL}a.tar.gz \
+	http://ftp.gnu.org/gnu/glibc/${MWP_GLIBC}.tar.bz2 \
+	http://ftp.gnu.org/gnu/glibc/${MWP_GLIBC_PORTS}.tar.bz2 \
+	http://ftp.gnu.org/gnu/binutils/${MWP_BINUTILS}.tar.bz2 \
+	http://mirrors.kernel.org/gnu/gcc/${MWP_GCC}/${MWP_GCC}.tar.bz2 \
+	http://www.uclibc.org/downloads/${MWP_UCLIBC_LOCALE}.tgz \
+	http://www.uclibc.org/downloads/${MWP_UCLIBC}.tar.bz2 \
+	ftp://ftp.trolltech.com/qtopia/source/${MWP_QTOPIA}.tar.gz \
+	http://www.qtopia.org.cn/ftp/mirror/ftp.trolltech.com/qt/source/${MWP_QTE}.tar.gz \
+	http://www.zlib.net/${MWP_ZLIB}.tar.gz \
+	http://download.savannah.gnu.org/releases/freetype/${MWP_FREETYPE}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/libpng/${MWP_LIBPNG}.tar.bz2 \
+	ftp://ftp.uu.net/graphics/jpeg/${MWP_JPEG}.tar.gz \
+	http://nchc.dl.sourceforge.net/sourceforge/giflib/${MWP_LIBUNGIF}.tar.bz2 \
+	http://dl.maptools.org/dl/libtiff/${MWP_TIFF}.tar.gz \
+	http://download.berlios.de/tslib/${MWP_TSLIB}.tar.bz2 \
+	http://www.directfb.org/downloads/Core/DirectFB-1.2/${MWP_DFB}.tar.gz \
+	ftp://ftp.alsa-project.org/pub/lib/${MWP_ALSA_LIB}.tar.bz2 \
+	http://ftp.gnu.org/pub/gnu/ncurses/${MWP_NCURSES}.tar.gz \
+	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_LIBMAD}.tar.gz \
+	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_LIBID3TAG}.tar.gz \
+	http://www.libsdl.org/release/${MWP_SDL}.tar.gz \
+	http://www.libsdl.org/projects/SDL_image/release/${MWP_SDL_IMAGE}.tar.gz \
+	http://www.libsdl.org/projects/SDL_ttf/release/${MWP_SDL_TTF}.tar.gz \
+	http://www.libsdl.org/projects/SDL_mixer/release/${MWP_SDL_MIXER}.tar.gz \
+	http://linux.schottelius.org/gpm/archives/${MWP_GPM}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/mesa3d/${MWP_MESA_GLUT}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/mesa3d/${MWP_MESA_DEMO}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/mesa3d/${MWP_MESA_LIB}.tar.bz2 \
+	http://busybox.net/downloads/${MWP_BUSYBOX}.tar.bz2 \
+	http://www.kernel.org/pub/linux/utils/kernel/hotplug/${MWP_UDEV}.tar.bz2 \
+	ftp://ftp.alsa-project.org/pub/utils/${MWP_ALSA_UTILS}.tar.bz2 \
+	http://s-tech.elsat.net.pl/fbv/${MWP_FBV}.tar.gz \
+	http://www.directfb.org/downloads/Extras/${MWP_DFB_EX}.tar.gz \
+	http://mpg123.orgis.org/download/${MWP_MPG123}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_MADPLAY}.tar.gz \
+	http://www3.mplayerhq.hu/MPlayer/releases/${MWP_MPLAYER}.tar.bz2 \
+	http://ncu.dl.sourceforge.net/sourceforge/faac/${MWP_FAAD2}.tar.bz2 \
+	http://downloads.sourceforge.net/libusb/${MWP_LIBUSB}.tar.gz \
+	http://downloads.sourceforge.net/linux-usb/${MWP_USB_UTILS}.tar.gz \
+	ftp://ftp.idsoftware.com/idstuff/doom/${MWP_DOOM_DATA}.gz \
+	http://nchc.dl.sourceforge.net/sourceforge/prboom/${MWP_PRBOOM}.tar.gz \
+	http://www.sfr-fresh.com/cgi-bin/warex?unix/misc/${MWP_FLEX}.tar.bz2 \
+	http://ftp.gnu.org/gnu/bison/${MWP_BISON}.tar.bz2 \
+	http://ftp.gnu.org/gnu/sed/${MWP_SED}.tar.gz \
+	http://ftp.gnu.org/gnu/gawk/${MWP_GAWK}.tar.bz2 \
+	ftp://ftp.gnu.org/gnu/gettext/${MWP_GETTEXT}.tar.gz \
+	http://ftp.gnu.org/gnu/texinfo/${MWP_TEXINFO}a.tar.gz \
+	http://ftp.gnu.org/gnu/gmp/${MWP_GMP}.tar.bz2 \
+	http://www.mpfr.org/mpfr-current/${MWP_MPFR}.tar.bz2 \
+	http://ftp.gnu.org/gnu/bash/${MWP_BASH}.tar.gz \
+	http://ftp.gnu.org/gnu/coreutils/${MWP_COREUTILS}.tar.gz \
+	http://www.scl.ameslab.gov/debian/pool/main/d/debianutils/${MWP_DEBUTILS}.tar.gz \
+	http://mirror.transact.net.au/sourceforge/l/lx/lxdoom/${MWP_LXDOOM}.tar.gz \
+	http://www.perl.com/CPAN/src/${MWP_PERL}.tar.gz \
+	http://www.kernel.org/pub/linux/utils/util-linux-ng/v2.15/${MWP_UTIL_LINUX}.tar.bz2 \
+	http://www.sfr-fresh.com/cgi-bin/warex?linux/misc/${MWP_SYSVINIT}.tar.bz2 \
+	ftp://ftp.ossp.org/pkg/lib/uuid/${MWP_UUID}.tar.gz \
+	ftp://ftp.vim.org/pub/vim/unix/${MWP_VIM}.tar.bz2 \
+	http://www.sfr-fresh.com/cgi-bin/warex?linux/misc/${MWP_E2FS}.tar.bz2 \
+	http://kernel.perespim.ru/pub/linux/kernel/people/tytso/e2fsprogs/${MWP_E2FS_LIBS}.tar.bz2 \
+	http://ftp.gnu.org/gnu/libtool/${SBP_LIBTOOL}.tar.gz \
+	http://ftp.gnu.org/gnu/grep/${MWP_GREP}.tar.bz2 \
+	http://ftp.gnu.org/gnu/autoconf/${MWP_AUTOCONF}.tar.bz2 \
+	http://ftp.gnu.org/gnu/automake/${MWP_AUTOMAKE}.tar.bz2 \
+	http://pkg-config.freedesktop.org/releases/${MWP_PKG_CONFIG}.tar.gz \
+	http://cgit.freedesktop.org/sbox2/snapshot/${MWP_SBOX2}.tar.bz2 \
+	http://savannah.inetbridge.net/qemu/${MWP_QEMU}.tar.gz \
+	http://dbus.freedesktop.org/releases/dbus/dbus-1.2.14.tar.gz \
+	" 

@@ -1,0 +1,28 @@
+diff --git a/preload/generate.py b/preload/generate.py
+old mode 100644
+new mode 100755
+diff --git a/preload/interface.master b/preload/interface.master
+index a8c145a..04d80d7 100644
+--- a/preload/interface.master
++++ b/preload/interface.master
+@@ -411,17 +411,17 @@ WRAP: int rmdir(const char *pathname) : \
+ #ifdef HAVE_SCANDIR
+ #ifdef HAVE_LINUX_SCANDIR
+ WRAP: int scandir(const char *dir, struct dirent ***namelist, \
+-	SCANDIR_TYPE_ARG3, int(*compar)(const void *, const void *)) : \
++	SCANDIR_TYPE_ARG3, int(*compar)(const struct dirent **, const struct dirent **)) : \
+ 	map(dir) hardcode_param(3,filter)
+ #endif
+ #ifdef HAVE_OSX_SCANDIR
+-WRAP: int scandir(const char *dirname, struct dirent ***namelist, int (*select)(struct dirent *), int (*compar)(const void *, const void *)): map(dirname)
++WRAP: int scandir(const char *dirname, struct dirent ***namelist, int (*select)(struct dirent *), int (*compar)(const struct dirent **, const struct dirent **)): map(dirname)
+ #endif
+ #endif
+ #ifdef HAVE_SCANDIR64
+ WRAP: int scandir64(const char *dir, struct dirent64 ***namelist, \
+ 	int(*filter)(const struct dirent64 *), \
+-	int(*compar)(const void *, const void *)) : \
++	int(*compar)(const struct dirent64 **, const struct dirent64 **)) : \
+ 	map(dir)
+ #endif
+ #ifdef HAVE_SETXATTR

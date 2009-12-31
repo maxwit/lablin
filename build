@@ -1,0 +1,162 @@
+#!/bin/sh
+#
+# The main menu for building MaxWit Lablin
+#
+# http://www.maxwit.com
+# http://maxwit.googlecode.com
+#
+# Authors:
+#     Tiger Yu   <tiger@maxwit.com>
+#     Conke Hu   <conke@maxwit.com>
+#     Fleya Hou  <fleya@maxwit.com>
+#
+
+
+MW_TOP_DIR=`dirname $0`
+cd ${MW_TOP_DIR}
+MW_TOP_DIR=${PWD}
+
+
+echo ${PWD} | grep "^${HOME}" > /dev/null 2>&1 || \
+{
+	echo "MaxWit must be built under \$HOME dir!"
+	exit 1
+}
+
+. core/bmw_menu
+. core/bmw_pkgs
+. core/bmw_base
+
+. host/build
+. toolchain/build
+. kernel/build
+. application/build
+
+
+BUILD_JOBS="-j1"
+SB2_CMD="sb2 -m install"
+
+
+# fixme!
+PROG_NAME=`basename $0`
+
+if [ "${PROG_NAME}" == "build-all" ]; then
+	exit 0
+fi
+
+
+mkdir -vp ${APP_BUILD_PATH}
+mkdir -vp ${UTILS_BUILD_PATH}
+
+QemuSetup()
+{
+	sudo touch /etc/qemu-ifup && \
+	sudo chmod 777 /etc/qemu-ifup && \
+	sudo touch /etc/qemu-ifdown && \
+	sudo chmod 777 /etc/qemu-ifdown
+
+	echo '#!/bin/sh' > /etc/qemu-ifup
+	echo "/sbin/ifconfig \$1 ${QEMU_HOST_IP}" >> /etc/qemu-ifup
+#	chmod a+x /etc/qemu-ifup
+
+	echo '#!/bin/sh' > /etc/qemu-ifdown
+	echo "/sbin/ifconfig \$1 down" >> /etc/qemu-ifdown
+#	chmod a+x /etc/qemu-ifdown
+}
+
+
+while true
+do
+	ShowMenu "[MaxWit Linux Building Menu] (configured for ${TARGET_SOC})" \
+			"Host Check & Setup (sudo)" \
+			"Build GNU Toolchain and Emulator" \
+			"Build Linux Kernel (${MWP_KERNEL})" \
+			"Build Basic System (busybox or coreutils)" \
+			"Build Applications (Lib/App/Games)" \
+			"Testing on QEMU" \
+			"Create File System Images (yaffs2/jffs2/cramfs,etc.)"
+
+	case $? in
+	0) # fixme
+		exit 1
+		;;
+
+	1)
+		sudo mkdir -p ${TFTP_PATH} && \
+		sudo chmod 777 ${TFTP_PATH}
+
+		grep "${MAXWIT_TOP}" /etc/exports > /dev/null 2>&1 || \
+		{
+			sudo chmod 666 /etc/exports
+			echo >> /etc/exports
+			echo "${MAXWIT_TOP} *(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports
+			sudo exportfs
+		}
+
+		QemuSetup
+		;;
+
+	2)
+		echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
+			|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
+
+		BuildUtils && \
+		BuildEmulator && \
+		BuildToolchain || exit 1
+	    ;;
+
+	3)  BuildKernel || exit 1
+		;;
+
+	4)  InitRoot || exit 1
+		# BuildRoot_BusyBox || exit 1
+		BuildRoot_CoreUtils || exit 1
+		;;
+
+	5)  BuildAppList \
+			${MWP_TSLIB} \
+			${MWP_LIBTOOL} \
+			${MWP_GETTEXT} \
+			${MWP_ALSA_UTILS} \
+			${MWP_ALSA_LIB} \
+			${MWP_MADPLAY} \
+			${MWP_LIBMAD} \
+			${MWP_MPG123} \
+			${MWP_LIBID3TAG} \
+			${MWP_FAAD2} \
+			${MWP_MPLAYER} \
+			${MWP_OPENSSL} \
+			${MWP_DBUS} \
+			${MWP_JPEG} \
+			${MWP_LIBUNGIF} \
+			${MWP_TIFF} \
+			${MWP_LIBPNG} \
+			${MWP_FBV} \
+			${MWP_LIBXML2} \
+			${MWP_FREETYPE}  \
+			${MWP_SDL} \
+			${MWP_SDL_IMAGE} \
+			${MWP_SDL_TTF} \
+			${MWP_SDL_MIXER} \
+			${MWP_DFB} \
+			${MWP_DFB_EX} \
+			${MWP_USB_UTILS} \
+			${MWP_PRBOOM} \
+			${MWP_VIM} \
+			|| exit 1
+		;;
+
+	6) RunQemu
+		;;
+
+	7) BuildImage
+		;;
+
+	*)
+		echo "Wrong Choice! Please Try Again."
+		;;
+	esac
+
+	echo
+done
+

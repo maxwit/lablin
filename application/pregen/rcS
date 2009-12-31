@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mount -t sysfs sysfs  /sys
+mount -t tmpfs tmpfs  /dev
+mount -t proc  proc   /proc
+mount -t tmpfs tmpfs  /tmp
+
+echo -n "Starting udev ... "
+udevd --daemon
+udevadm trigger
+echo "OK."
+
+echo
+echo "    ***********************************"
+echo "    *     Welcome to MaxWit Linux!    *"
+echo "    *   http://maxwit.googlecode.com  *"
+echo "    ***********************************"
+echo

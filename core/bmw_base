@@ -1,0 +1,314 @@
+#!/bin/sh
+#
+# http://maxwit.googlecode.com
+#
+# Authors:
+#     Conke Hu   <conke@maxwit.com>
+#     Tiger Yu   <tiger@maxwit.com>
+#     Fleya Hou  <fleya@maxwit.com>
+#
+
+
+SRC_PATH=/work/source_pkg
+TFTP_PATH=/var/lib/tftpboot
+
+MAXWIT_TOP=${HOME}/maxwit
+SYSROOT_PATH=${MAXWIT_TOP}/sysroot
+ROOTFS_PATH=${MAXWIT_TOP}/rootfs
+BUILD_PATH=${MAXWIT_TOP}/build
+IMAGES_PATH=${MAXWIT_TOP}/images
+
+# host utils
+UTILS_ROOT=${MAXWIT_TOP}/utils
+MWEMU_ROOT=${MAXWIT_TOP}/mwemu
+
+# sub dirs in $BUILD_PATH
+UTILS_BUILD_PATH=${BUILD_PATH}/host
+TOOLCHAIN_BUILD_PATH=${BUILD_PATH}/toolchain
+KERNEL_BUILD_PATH=${BUILD_PATH}/kernel
+APP_BUILD_PATH=${BUILD_PATH}/application
+
+QEMU_HOST_IP="10.0.0.1"
+QEMU_MACH_IP="10.0.0.2"
+
+# fixme
+mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
+
+if [ ! -d ${SRC_PATH} ]; then
+	SRC_PATH=${MAXWIT_TOP}/source_pkg
+	mkdir -vp ${SRC_PATH}
+fi
+
+BUILD_ARCH=`uname -m`
+BUILD_PLAT=`gcc -dumpmachine`
+
+if [ "${BUILD_ARCH}" = x86_64 ]; then
+	LIB_CFLAGS="-fPIC"
+fi 
+
+
+# fixme: prompt
+TARGET_SOC="S3C2440"
+TARGET_SOC=`echo ${TARGET_SOC} | tr A-Z a-z`
+
+case "${TARGET_SOC}" in
+	s3c2410 | s3c2440)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		BU_CPU_OPT="--with-float=soft"
+		GCC_CPU_OPT="--with-float=soft --with-arch=armv4t --with-tune=arm920t"
+		;;
+
+	s3c6400 | s3c6410)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		GCC_CPU_OPT="--with-cpu=arm1176zjf-s"
+		;;
+
+	at91sam9261 | at91sam9263)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		BU_CPU_OPT="--with-float=soft"
+		GCC_CPU_OPT="--with-float=soft --with-arch=armv5te --with-tune=arm926ej-s"
+		;;
+
+	malta)
+		TARGET_ARCH="mips"
+		QEMU_ARCH="mipsel"
+		TARGET_PLAT="mipsel-maxwit-linux-gnu"
+		GCC_CPU_OPT="--with-abi=32 --with-tune=mips32r2"
+		;;
+
+	loongson2f)
+		TARGET_ARCH="mips"
+		QEMU_ARCH="mips64el"
+		TARGET_PLAT="mips64el-maxwit-linux-gnu"
+		GCC_CPU_OPT="--with-abi=64 --with-tune=loongson2f"
+		BU_CPU_OPT="--enable-64-bit-bfd"
+		GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc -mabi=64"
+		;;
+
+	*)
+		echo "NO target SoC is assigned!"
+		exit 1
+		;;
+esac
+
+
+[ -z "${GLIBC_BUILDING_GCC}" ] && GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc"
+[ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}
+
+grep "${MWEMU_ROOT}" ~/.bashrc > /dev/null \
+	|| echo "export PATH=${MWEMU_ROOT}/usr/bin:\${PATH}" >> ~/.bashrc
+
+echo ${PATH} | grep "${MWEMU_ROOT}" > /dev/null \
+	|| export PATH=${MWEMU_ROOT}/usr/bin:${PATH}
+
+grep "${SYSROOT_PATH}" ~/.bashrc > /dev/null \
+	|| echo "export PATH=\${PATH}:${SYSROOT_PATH}/usr/bin" >> ~/.bashrc
+
+echo ${PATH} | grep "${SYSROOT_PATH}" > /dev/null \
+	|| export PATH=${PATH}:${SYSROOT_PATH}/usr/bin
+
+
+# mkdir -vp ${SYSROOT_PATH} ${ROOTFS_PATH} ${IMAGES_PATH} 
+
+# $1: pkg name
+# $2: category
+Unpack()
+{
+	local pkg="${1}"
+	local upkg=""
+
+	echo -n "Extracting \"${pkg}\" ."
+
+	if [ -z "${2}" ]; then
+		echo "target dir NOT specified!"
+		exit 1
+	fi
+
+	cd ${BUILD_PATH}/${2}
+
+	rm -rf ${pkg}
+	echo -n "."
+
+	if test -f ${SRC_PATH}/${pkg}.tar.bz2; then
+		tar jxf ${SRC_PATH}/${pkg}.tar.bz2 || exit 1
+	elif test -f ${SRC_PATH}/${pkg}.tar.gz; then
+		tar zxf ${SRC_PATH}/${pkg}.tar.gz || exit 1
+	else
+		tar xf ${SRC_PATH}/${pkg}* || exit 1
+	fi
+
+	echo -n "."
+
+	case "${pkg}" in
+	glibc-*)
+		rm -rf glibc-ports-${GLIBC_VER}
+		tar xf ${SRC_PATH}/glibc-ports-${GLIBC_VER}.tar.* || exit 1
+		mv glibc-ports-${GLIBC_VER} ${MWP_GLIBC}/ports
+		;;
+
+	libtool-2.2.6a | texinfo-4.13a)
+	 	mv ${pkg%a} ${pkg} || exit 1
+		;;
+
+	debianutils*)
+		upkg=`echo ${pkg} | sed 's/_/-/'`
+		mv ${upkg} ${pkg} || exit 1
+		;;
+
+	vim*)
+		upkg=`echo ${pkg} | sed -e 's/-//' -e 's/\.//'`
+		mv ${upkg} ${pkg} || exit 1
+		;;
+
+	jpegsrc*)
+		upkg="jpeg-6b" # fixme
+		mv ${upkg} ${pkg} || exit 1
+		;;
+
+	esac
+
+	echo  " OK."
+
+	cd ${pkg} || exit 1
+
+	which patch > /dev/null 2>&1 && \
+	{
+		for fpatch in `ls ${MW_TOP_DIR}/${2}/${pkg}/*.patch 2>/dev/null`
+		do
+			patch -p1 -i ${fpatch} || exit 1
+		done
+	}
+}
+
+
+# Downlaod packages
+DownLoadPkg()
+{
+	local pkg_link_list
+	local pkg_link
+
+
+	local DL_CMD="wget -t 10 -w 5 -P ${SRC_PATH} -c"
+
+	pkg_link_list=${1}
+	shift
+
+	cd ${SRC_PATH}
+
+	while test $# -ge 1
+	do
+		for pkg_link in ${pkg_link_list}
+		do
+			if [ -n "`echo ${pkg_link} | grep ${1}`" ];then
+				pkg_name=`basename ${pkg_link}`
+				if [ ! -f "${pkg_name}" ]; then
+					echo
+					echo
+					echo "/**************************************************/"
+					echo "    Downloading package of ${1}"
+					echo "/**************************************************/"
+					echo
+					${DL_CMD} ${pkg_link} -O ${pkg_name}
+				fi
+			fi
+		done
+		shift
+	done
+
+}
+
+
+PrintPkgLink()
+{
+	local pkg_link_list
+	local pkg_link
+	local mw_pkg_url="${SRC_PATH}/mw_pkg_url.txt"
+
+	pkg_link_list=${1}
+	shift
+	
+	rm -rf ${mw_pkg_url}
+
+	echo
+	echo "Generating package URLs:"
+	while test $# -ge 1
+	do
+		for pkg_link in ${pkg_link_list}
+		do
+			if [ -n "`echo ${pkg_link} | grep ${1}`" ];then
+				echo ${pkg_link} >>  ${mw_pkg_url}
+				echo "    ${pkg_link}"
+			fi
+		done
+		shift
+	done
+
+	echo
+	echo "All URLs are generated and saved to file \"${mw_pkg_url}\"."
+	echo "You may get them later with your favorate download utility :P"
+	echo
+}
+
+# one and only one argument is accepted!!
+CheckPkg()
+{
+	local lost_list=""
+	local pkg=""
+	local yes
+
+	for pkg in $1
+	do
+		ls ${SRC_PATH}/${pkg}.* > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}[ab].* > /dev/null 2>&1 || \
+		{
+			if [ -z "${lost_list}" ]; then
+				lost_list="${pkg}"
+			else
+				lost_list="${lost_list} ${pkg}"
+			fi
+		}
+	done
+
+	[ -z "${lost_list}" ] && return
+
+	echo
+	echo
+	echo "Following packages cound NOT be found in \"${SRC_PATH}\":"
+	echo
+	for pkg in ${lost_list}
+	do
+		echo "    $pkg"
+	done
+
+	echo
+
+	echo -n "Download them now? (y/n) "
+	read dl
+	
+	if [ "${dl}" = "y" -o "${dl}" = "Y" -o "${dl}" = "dl" -o "${dl}" = "Yes" ]; then
+		DownLoadPkg "${PLINK_LIST}" ${lost_list}
+	else
+		PrintPkgLink "${PLINK_LIST}" ${lost_list}	
+		exit 1
+	fi
+
+#	exit 1
+}
+
+
+CheckMap()
+{
+	MM_FILE="/proc/sys/vm/mmap_min_addr"
+	MM_MIN_ADDR=`cat ${MM_FILE}` || exit 1
+	if [ "${MM_MIN_ADDR}" != "0" ]; then
+		if [ ${USER} = root ]; then
+			echo 0 > ${MM_FILE} || exit 1
+		else
+			echo "Pls run \"echo 0 > ${MM_FILE}\" as root!"
+			exit 1
+		fi
+	fi
+}

@@ -1,0 +1,8 @@
+export PS1="\[\e[36;1m\]\u@\[\e[32;1m\]\w# \[\e[0m\]"
+
+if [ "$TERM" != "dumb" ]; then 
+	eval `dircolors -b`
+	alias ls='ls --color=auto'
+	alias dir='ls --color=audo --format=vertical'
+	alias vdir='ls --color=audo --format=long'
+fi

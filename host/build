@@ -1,0 +1,99 @@
+#!/bin/sh
+#
+# http://www.maxwit.com
+# http://maxwit.googlecode.com
+#
+# Authors:
+#     Conke Hu    <conke@maxwit.com>
+#     Tiger Yu    <tiger@maxwit.com>
+#     Fleya Hou   <fleya@maxwit.com>
+#
+
+
+UTILS_TOP="${MW_TOP_DIR}/host"
+BUILT_TAG=".maxwit_built"
+
+# fixme for loop
+BuildHostPkg()
+{
+	local df=""
+	local subdir="${UTILS_TOP}/${1}"
+	local srcdir="${UTILS_BUILD_PATH}/${1}"
+
+	if [ -d "${subdir}" ]; then
+		cd "${subdir}" 
+	else
+		echo "\"${subdir}\" does NOT exist!"
+		return 1
+	fi
+
+	if [ -e "${srcdir}/${BUILT_TAG}" ]; then
+		echo "\"${1}\" has been built."
+		echo
+		return 0
+	fi
+
+	if [ -f dep ]; then
+		for df in `cat dep`
+		do
+			BuildHostPkg ${df}
+		done
+	fi	
+
+	CheckPkg ${1}
+
+	Unpack ${1} host
+
+	cd ${srcdir}
+
+	${subdir}/build.sh ${2} && \
+	touch ${srcdir}/${BUILT_TAG} || exit 1
+	echo
+
+	return 0
+}
+
+
+BuildUtils()
+{
+	mkdir -vp ${UTILS_ROOT}/usr/bin
+	mkdir -vp ${UTILS_ROOT}/usr/lib
+	mkdir -vp ${UTILS_ROOT}/usr/share/man/man1
+	echo
+
+	for pkg in \
+		${MWP_PKG_CONFIG} \
+		${MWP_PATCH} \
+		${MWP_GETTEXT} \
+		${MWP_M4} \
+		${MWP_LIBTOOL} \
+		${MWP_FLEX} \
+		${MWP_BISON} \
+		${MWP_SED} \
+		${MWP_GAWK} \
+		${MWP_TEXINFO} \
+		${MWP_GMP} \
+		${MWP_MPFR} \
+		${MWP_AUTOCONF} \
+		${MWP_AUTOMAKE} \
+		;
+	do
+		BuildHostPkg ${pkg} ${UTILS_ROOT}
+	done
+
+#	sed -i "s:\(.*my.*ENV.*\)libtoolize:\1${UTILS_ROOT}/bin/libtoolize:" ${UTILS_PREFIX}/bin/autoreconf || exit 1
+}
+
+
+BuildEmulator()
+{
+	mkdir -vp ${MWEMU_ROOT}/usr/bin
+	mkdir -vp ${MWEMU_ROOT}/usr/lib
+	mkdir -vp ${MWEMU_ROOT}/usr/share/man/man1
+
+	for pkg in ${MWP_QEMU} ${MWP_SBOX2}
+	do
+		BuildHostPkg ${pkg} ${MWEMU_ROOT}
+	done
+}
+

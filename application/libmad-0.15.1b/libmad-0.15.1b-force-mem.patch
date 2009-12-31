@@ -1,0 +1,18 @@
+--- libmad-0.15.1b/configure.orig	2009-12-29 00:50:37.437491994 +0800
++++ libmad-0.15.1b/configure	2009-12-29 00:52:02.110739571 +0800
+@@ -19090,6 +19090,7 @@ then
+ 	    i?86-*)           arch="-march=i486" ;;
+ 	    arm*-empeg-*)     arch="-march=armv4 -mtune=strongarm1100" ;;
+ 	    armv4*-*)         arch="-march=armv4 -mtune=strongarm" ;;
++	    armv5*-*)         arch="-march=armv5te -mtune=arm926ej-s" ;;
+ 	    powerpc-*)        ;;
+ 	    mips*-agenda-*)   arch="-mcpu=vr4100" ;;
+ 	    mips*-luxsonor-*) arch="-mips1 -mcpu=r3000 -Wa,-m4010" ;;
+@@ -19099,7 +19100,6 @@ then
+     case "$optimize" in
+ 	-O|"-O "*)
+ 	    optimize="-O"
+-	    optimize="$optimize -fforce-mem"
+ 	    optimize="$optimize -fforce-addr"
+ 	    : #x optimize="$optimize -finline-functions"
+ 	    : #- optimize="$optimize -fstrength-reduce"

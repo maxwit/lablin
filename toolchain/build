@@ -1,0 +1,171 @@
+#!/bin/sh
+#
+# http://www.maxwit.com
+# http://maxwit.googlecode.com
+#
+# Authors:
+#     Conke Hu    <conke@maxwit.com>
+#     Tiger Yu    <tiger@maxwit.com>
+#     Fleya Hou   <fleya@maxwit.com>
+#
+
+# TODO:
+# check source package list
+
+
+CreatBuildDir()
+{
+	rm -rf ${TOOLCHAIN_BUILD_PATH}/${1}
+	mkdir -vp ${TOOLCHAIN_BUILD_PATH}/${1} && \
+	cd ${TOOLCHAIN_BUILD_PATH}/${1} || exit 1
+}
+
+BuildToolchain()
+{
+	mkdir -p ${KERNEL_BUILD_PATH}
+	mkdir -p ${TOOLCHAIN_BUILD_PATH}
+
+	TOOLCHAIN_PKG_LIST="\
+		${MWP_BINUTILS} \
+		${MWP_GCC} \
+		${MWP_GLIBC} \
+		"
+
+	CheckPkg "${MWP_KERNEL} ${TOOLCHAIN_PKG_LIST}"
+
+	Unpack ${MWP_KERNEL} kernel # fixme
+
+	for pkg in ${TOOLCHAIN_PKG_LIST}
+	do
+		Unpack ${pkg} toolchain || exit 1
+	done
+
+	sed -i 's,\(const char pkgversion_string.*=\).*;,\1 "from http://www.maxwit.com ";,' \
+		${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/gcc/version.c
+
+
+	cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
+	KERN_OPT="ARCH=${TARGET_ARCH} INSTALL_HDR_PATH=${SYSROOT_PATH}/usr"
+	# make ${KERN_OPT} distclean
+	# make ${KERN_OPT} at91sam9263ek_defconfig #fixme
+	# sed -i 's/# CONFIG_AEABI.*/CONFIG_AEABI=y/' .config
+	# sed -i '/CONFIG_AEABI/a # CONFIG_OABI_COMPAT is not set' .config
+	# sed -i 's/\(CONFIG_SYSFS_DEPRECATED.*\)=y/# \1 is not set/' .config
+	make ${KERN_OPT} headers_install || exit 1
+
+
+	CreatBuildDir binutils-build
+
+	${TOOLCHAIN_BUILD_PATH}/${MWP_BINUTILS}/configure \
+		--prefix=/usr \
+		--build=${BUILD_PLAT} \
+		--host=${BUILD_PLAT} \
+		--target=${TARGET_PLAT} \
+		--with-sysroot=${SYSROOT_PATH} \
+		--with-gmp=${UTILS_ROOT}/usr \
+		--with-mpfr=${UTILS_ROOT}/usr \
+		--disable-nls \
+		--disable-werror \
+		--disable-multilib \
+		${BU_CPU_OPT} \
+		|| exit 1
+
+	make && \
+	make DESTDIR=${SYSROOT_PATH} install || exit 1
+
+	cp -v ../${MWP_BINUTILS}/include/libiberty.h ${SYSROOT_PATH}/usr/include
+
+
+	CreatBuildDir gcc-build-1
+
+	${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/configure \
+		--prefix=/usr \
+		--build=${BUILD_PLAT} \
+		--host=${BUILD_PLAT} \
+		--target=${TARGET_PLAT} \
+		--with-sysroot=${SYSROOT_PATH} \
+		--with-gmp=${UTILS_ROOT}/usr \
+		--with-mpfr=${UTILS_ROOT}/usr \
+		--without-headers \
+		--with-newlib \
+		--disable-multilib \
+		--disable-nls \
+		--disable-decimal-float \
+		--disable-libgomp \
+		--disable-libmudflap \
+		--disable-libssp \
+		--disable-shared \
+		--disable-threads \
+		--enable-long-long \
+		--enable-languages=c \
+		${GCC_CPU_OPT} \
+		|| exit 1
+
+	make && make DESTDIR=${SYSROOT_PATH} install || exit 1
+
+
+	CreatBuildDir glibc-build
+
+	echo "install_root=${SYSROOT_PATH}" > configparms
+	libc_cv_forced_unwind=yes \
+	libc_cv_c_cleanup=yes \
+	libc_cv_gnu99_inline=yes \
+	HOST_CC=gcc \
+	CC="${GLIBC_BUILDING_GCC}" \
+	AR="${TARGET_PLAT}-ar" \
+	RANLIB="${TARGET_PLAT}-ranlib" \
+	${TOOLCHAIN_BUILD_PATH}/${MWP_GLIBC}/configure \
+		--prefix=/usr \
+		--build=${BUILD_PLAT} \
+		--host=${TARGET_PLAT} \
+		--disable-profile \
+		--enable-add-ons \
+		--with-tls \
+		--enable-kernel=2.6.17 \
+		--with-__thread \
+		--with-binutils=${SYSROOT_PATH}/usr/bin \
+		--with-headers=${SYSROOT_PATH}/usr/include \
+		|| exit 1
+
+	make && make install || exit 1
+
+
+	CreatBuildDir gcc-build-2
+
+	${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/configure \
+		--prefix=/usr \
+		--build=${BUILD_PLAT} \
+		--host=${BUILD_PLAT} \
+		--target=${TARGET_PLAT} \
+		--with-sysroot=${SYSROOT_PATH} \
+		--with-gmp=${UTILS_ROOT}/usr \
+		--with-mpfr=${UTILS_ROOT}/usr \
+		--disable-multilib \
+		--disable-nls \
+		--enable-shared \
+		--enable-__cxa_atexit \
+		--enable-c99 \
+		--enable-long-long \
+		--enable-threads=posix \
+		--enable-languages=c,c++ \
+		${GCC_CPU_OPT} \
+		|| exit 1
+
+	make AS_FOR_TARGET=${TARGET_PLAT}-as LD_FOR_TARGET=${TARGET_PLAT}-ld || exit 1
+	make DESTDIR=${SYSROOT_PATH} install || exit 1
+
+	# fixme
+	cd ${SYSROOT_PATH}/usr/bin
+	for file in `ls ${TARGET_PLAT}-*`; do
+		ln -vs ${file} ${TARGET_ARCH}-linux${file##${TARGET_PLAT}}
+		ln -vs ${file} ${file##${TARGET_PLAT}-}
+	done
+
+	ln -vs ${TARGET_PLAT}-gcc ${TARGET_PLAT}-cc
+	ln -vs ${TARGET_PLAT}-gcc cc
+
+	echo
+	echo "Toolchain \"${TARGET_PLAT}\" has been built successfully!"
+	echo
+}
+

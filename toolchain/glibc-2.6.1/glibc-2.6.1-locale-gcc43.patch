@@ -1,0 +1,22 @@
+--- glibc-2.6.1/locale/programs/charmap-kw.h.orig	2008-11-12 14:13:19.000000000 +0800
++++ glibc-2.6.1/locale/programs/charmap-kw.h	2008-11-12 14:13:39.000000000 +0800
+@@ -127,7 +127,7 @@ hash (register const char *str, register
+ #ifdef __GNUC__
+ __inline
+ #endif
+-const struct keyword_t *
++static const struct keyword_t *
+ charmap_hash (register const char *str, register unsigned int len)
+ {
+   static const struct keyword_t wordlist[] =
+--- glibc-2.6.1/locale/programs/locfile-kw.h.orig	2008-11-12 15:52:33.000000000 +0800
++++ glibc-2.6.1/locale/programs/locfile-kw.h	2008-11-12 15:53:52.000000000 +0800
+@@ -127,7 +127,7 @@ hash (register const char *str, register
+ #ifdef __GNUC__
+ __inline
+ #endif
+-const struct keyword_t *
++static const struct keyword_t *
+ locfile_hash (register const char *str, register unsigned int len)
+ {
+   static const struct keyword_t wordlist[] =
