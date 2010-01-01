@@ -138,7 +138,7 @@ cat > ${ROOTFS_PATH}/etc/init.d/rcS << EOF
 
 echo
 echo "    ***********************************"
-echo "    *    Welcome to MaxWit Linux !    *"
+echo "    *    Welcome to MaxWit Lablin!    *"
 echo "    *    [ http://www.maxwit.com ]    *"
 echo "    ***********************************"
 echo

@@ -67,7 +67,7 @@ QemuSetup()
 
 while true
 do
-	ShowMenu "[MaxWit Linux Building Menu] (configured for ${TARGET_SOC})" \
+	ShowMenu "[MaxWit Lablin Building Menu] (configured for ${TARGET_SOC})" \
 			"Host Check & Setup (sudo)" \
 			"Build GNU Toolchain and Emulator" \
 			"Build Linux Kernel (${MWP_KERNEL})" \

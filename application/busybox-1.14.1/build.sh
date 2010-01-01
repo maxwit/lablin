@@ -13,7 +13,7 @@ make CONFIG_PREFIX=/ install || exit 1
 # 
 # echo
 # echo "    ***********************************"
-# echo "    *    Welcome to MaxWit Linux !    *"
+# echo "    *    Welcome to MaxWit Lablin !    *"
 # echo "    *    [ http://www.maxwit.com ]    *"
 # echo "    ***********************************"
 # echo

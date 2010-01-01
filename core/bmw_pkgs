@@ -34,7 +34,7 @@ MWP_GLIBC="glibc-${GLIBC_VER}"
 MWP_GLIBC_PORTS="glibc-ports-${GLIBC_VER}"
 
 
-# MaxWit Linux packages:
+# MaxWit Lablin packages:
 MWP_BASH="bash-4.0"
 MWP_COREUTILS="coreutils-7.2"
 MWP_DEBIANUTILS="debianutils_2.30"

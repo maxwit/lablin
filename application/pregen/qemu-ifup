@@ -1,2 +1,0 @@
-#!/bin/sh
-sudo -p "Password for $0:" /sbin/ifconfig $1 HOST_IP
