@@ -18,7 +18,7 @@ CFLAGS=-DUSE_INPUT_API \
 	--enable-input \
 	|| exit 1
 
-sed -i 's/# \(module_raw input\)/\1/' etc/ts.conf
+# sed -i 's/# \(module_raw input\)/\1/' etc/ts.conf
 
 make && make install || exit 1
 

@@ -9,7 +9,7 @@
 	--prefix=/usr \
 	|| exit 1
 
-sed -i '/rpl_malloc/d' config.h
+# sed -i '/rpl_malloc/d' config.h
 make || exit 1
 
 make install || exit 1

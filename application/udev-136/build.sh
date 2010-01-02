@@ -8,7 +8,7 @@ UDEV_TOP=`dirname $0`
 	--sysconfdir=/etc \
 	|| exit 1
 
-sed -i '/open.*null.*O_/i\\tmknod("/dev/null", S_IFCHR | 0666, makedev(1, 3));' udev/udevd.c
+# sed -i '/open.*null.*O_/i\\tmknod("/dev/null", S_IFCHR | 0666, makedev(1, 3));' udev/udevd.c
 # sed -i '/in,out,err/,+10d' udev/udevd.c
 # sed -i 's/udevtrigger/udevadm trigger/' /etc/init.d/rcS
 

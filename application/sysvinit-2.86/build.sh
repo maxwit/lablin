@@ -3,7 +3,7 @@
 cd src
 
 # if [ ${USER} != root ]; then
-sed -i 's/\(INSTALL.*=\).*/\1 install/' Makefile
+# sed -i 's/\(INSTALL.*=\).*/\1 install/' Makefile
 # fi
 
 make && make install || exit 1

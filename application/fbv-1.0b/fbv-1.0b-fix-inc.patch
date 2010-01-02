@@ -1,0 +1,14 @@
+diff -Nur fbv-1.0b.orig/fb_display.c fbv-1.0b/fb_display.c
+--- fbv-1.0b.orig/fb_display.c	2004-09-07 20:09:43.000000000 +0800
++++ fbv-1.0b/fb_display.c	2010-01-01 19:12:28.000000000 +0800
+@@ -18,9 +18,8 @@
+     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+-#include <linux/fb.h>
+-
+ #include <stdio.h>
++#include <linux/fb.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>

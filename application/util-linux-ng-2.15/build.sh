@@ -10,7 +10,7 @@
 	--disable-require-password \
 	|| exit 1
 
-sed -i 's/4755/755/' mount/Makefile
+# sed -i 's/4755/755/' mount/Makefile
 
 make && \
 make install || exit 1

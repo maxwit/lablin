@@ -1,0 +1,36 @@
+diff -Nur fbv-1.0b.orig/configure fbv-1.0b/configure
+--- fbv-1.0b.orig/configure	2004-09-07 19:29:27.000000000 +0800
++++ fbv-1.0b/configure	2010-01-01 20:12:38.000000000 +0800
+@@ -106,12 +106,12 @@
+ ungif="no"
+ echo "libungif check" >>./config.log
+ echo "  1st:" >>./config.log
+-cc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lungif $libs
++gcc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lungif $libs
+ if [ -e \$\$~test ]; then
+ 	libs="-lungif $libs" ; ungif="yes"
+ else
+ 	echo "  2nd: -lX11 -L$xdir/lib" >>./config.log
+-	cc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lungif -lX11 -L$xdir/lib $libs
++	gcc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lungif -lX11 -L$xdir/lib $libs
+ 	if [ -e \$\$~test ]; then
+ 	libs="-lungif -lX11 -L$xdir/lib $libs" ; ungif="yes"
+ 	fi
+@@ -124,7 +124,7 @@
+ echo -n "checking for libjpeg presence... "
+ if [ "$jpeg" != "disabled" ]; then
+ jpeg="no"
+-cc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -ljpeg $libs
++gcc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -ljpeg $libs
+ if [ -e \$\$~test ]; then
+ 	libs="-ljpeg $libs" ; jpeg="yes"
+ fi
+@@ -135,7 +135,7 @@
+ echo -n "checking for libpng presence... "
+ if [ "$png" != "disabled" ]; then
+ png="no"
+-cc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lpng $libs
++gcc 2>>./config.log >>./config.log -o \$\$~test \$\$~test.c -lpng $libs
+ if [ -e \$\$~test ]; then
+ 	libs="-lpng $libs" ; png="yes"
+ fi

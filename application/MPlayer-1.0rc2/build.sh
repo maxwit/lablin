@@ -8,6 +8,6 @@
 	--prefix=/usr \
 	|| exit 1
 
-sed -i '/INSTALLSTRIP/d' config.mak
+# sed -i '/INSTALLSTRIP/d' config.mak
 
 make && make install || exit 1
