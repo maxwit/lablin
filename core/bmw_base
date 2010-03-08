@@ -9,7 +9,7 @@
 #
 
 
-SRC_PATH=/work/source_pkg
+SRC_PATH=/work/source
 TFTP_PATH=/var/lib/tftpboot
 
 MAXWIT_TOP=${HOME}/maxwit
@@ -35,7 +35,7 @@ QEMU_MACH_IP="10.0.0.2"
 mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
 
 if [ ! -d ${SRC_PATH} ]; then
-	SRC_PATH=${MAXWIT_TOP}/source_pkg
+	SRC_PATH=${MAXWIT_TOP}/source
 	mkdir -vp ${SRC_PATH}
 fi
 
@@ -48,7 +48,7 @@ fi
 
 
 # fixme: prompt
-TARGET_SOC="S3C2440"
+TARGET_SOC="S3C6410"
 TARGET_SOC=`echo ${TARGET_SOC} | tr A-Z a-z`
 
 case "${TARGET_SOC}" in
@@ -62,10 +62,10 @@ case "${TARGET_SOC}" in
 	s3c6400 | s3c6410)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
-		GCC_CPU_OPT="--with-cpu=arm1176zjf-s"
+		GCC_CPU_OPT="--with-arch=armv6"
 		;;
 
-	at91sam9261 | at91sam9263)
+	at91sam9261 | at91sam9263 | pxa168)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
 		BU_CPU_OPT="--with-float=soft"

@@ -333,8 +333,8 @@ BuildImage()
 		*mkfs.jffs2)
 			echo -n "jffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}_l.jffs2 ..."
 			sudo ${TOOL_PATH} -r ${IMG_RFS_PATH} -s 2048 -e 0x20000 -l -p -n -o ${IMAGES_PATH}/${IMAGE_PREFIX}_l.jffs2
-			echo "OK."
-			echo -n "jffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}_s.jffs2 ... "
+			echo " OK."
+			echo -n "jffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}_s.jffs2 ..."
 			${TOOL_PATH} -r ${IMG_RFS_PATH} -s 512 -e 0x4000 -l -p -n -o ${IMAGES_PATH}/${IMAGE_PREFIX}_s.jffs2
 			echo " OK."
 			;;	
