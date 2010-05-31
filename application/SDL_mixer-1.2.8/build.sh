@@ -1,16 +1,16 @@
 #!/bin/sh
 #
-# http://code.google.com/p/maxwit/
+# http://maxwit.googlecode.com/
 #
 
 
 hardcode_into_libs=no \
 ./configure \
 	--prefix=/usr \
+	--build=${BUILD_PLAT} \
+	--host=${TARGET_PLAT} \
+	--enable-sdltest  \
 	|| exit 1
 
 make && \
-make install  || exit 1
-
-#--disable-music-mp3  \
-
+make DESTDIR=${SYSROOT_PATH} install  || exit 1

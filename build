@@ -130,23 +130,20 @@ do
 			${MWP_TIFF} \
 			${MWP_FREETYPE}  \
 			${MWP_DFB} \
+			${MWP_DFB_EX} \
+			${MWP_SDL} \
+			${MWP_LIBUSB} \
+			${MWP_MPLAYER} \
+			${MWP_PRBOOM} \
 			|| exit 1
 			exit 0
 
-			${MWP_MPLAYER} \
-			${MWP_DFB_EX} \
-			${MWP_OPENSSL} \
-			${MWP_DBUS} \
-			${MWP_LIBXML2} \
-			${MWP_SDL} \
 			${MWP_SDL_IMAGE} \
 			${MWP_SDL_TTF} \
 			${MWP_SDL_MIXER} \
-			${MWP_USB_UTILS} \
-			${MWP_PRBOOM} \
-			${MWP_VIM} \
-			${MWP_LIBTOOL} \
-			${MWP_GETTEXT} \
+			${MWP_OPENSSL} \
+			${MWP_DBUS} \
+			${MWP_LIBXML2} \
 			|| exit 1
 		;;
 
@@ -163,4 +160,3 @@ do
 
 	echo
 done
-

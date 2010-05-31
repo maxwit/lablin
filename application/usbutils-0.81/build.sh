@@ -1,16 +1,17 @@
 #!/bin/sh
 #
+# Authors:
+#	Conke Hou  <conke@maxwit.com>
 #
 
 
-# ac_cv_lib_usb_usb_get_string_simple=yes \
-
 ./configure \
 	--prefix=/usr \
-	|| exit 1
+	--build=${BUILD_PLAT} \
+	--host=${TARGET_PLAT} \
+	--enable-usbmodule || exit
 
-# sed -i '/rpl_malloc/d' config.h
-make || exit 1
+sed -i '/rpl_malloc/d' config.h
 
-make install || exit 1
-
+make || exit
+make DESTDIR=${SYSROOT_PATH} install || exit
