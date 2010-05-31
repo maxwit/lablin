@@ -4,7 +4,11 @@
 #
 
 
-./configure --prefix=/usr || exit 1
+./configure \
+	--prefix=/usr \
+	--build=${BUILD_PLAT} \
+	--host=${TARGET_PLAT} \
+	|| exit 1
 
 make || exit 1
 
@@ -14,6 +18,6 @@ if [ ! -e alsamixer/alsamixer ]; then
 fi
 
 for exe in alsactl alsamixer aplay amixer; do
-	make -C ${exe} install-exec || exit 1
+	make -C ${exe} DESTDIR=${ROOTFS_PATH} install-exec || exit 1
 done
 

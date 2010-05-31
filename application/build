@@ -54,8 +54,15 @@ BuildAppPkg()
 	if test -x  ${subdir}/build.sh; then
 		${subdir}/build.sh || exit 1
 	else
-		./configure --prefix=/usr --host=${TARGET_PLAT} --build=${BUILD_PLAT} && \
-		make && make DESTDIR=${ROOTFS_PATH} install || exit 1
+		./configure \
+			--prefix=/usr \
+			--host=${TARGET_PLAT} \
+			--build=${BUILD_PLAT} \
+			|| exit 1
+
+		make && \
+		make DESTDIR=${SYSROOT_PATH} install || exit 1
+		# make DESTDIR=${ROOTFS_PATH} install || exit 1
 	fi
 
 	if test -x  ${subdir}/setup.sh; then
