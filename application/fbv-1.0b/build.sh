@@ -2,9 +2,13 @@
 #
 #
 
-./configure \
-	--prefix=/usr \
-	|| exit 1	
+sed -i '/#include <linux\/fb.h>/d' fb_display.c
+sed -i '/stdio.h/a\#include <linux/fb.h>' fb_display.c
+sed -i "s/\<cc\>/${TARGET_PLAT}-gcc/" configure
 
-make && make  install || exit 1
+./configure --prefix=/usr --without-libungif # fixme!
+sed -i '/mandir/d' Makefile
+
+make CC=${TARGET_PLAT}-gcc && \
+make DESTDIR=${SYSROOT_PATH} install || exit 1
 

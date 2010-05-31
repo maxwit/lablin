@@ -121,21 +121,19 @@ do
 			${MWP_MADPLAY} \
 			${MWP_LIBMAD} \
 			${MWP_LIBID3TAG} \
+			${MWP_MPG123} \
+			${MWP_FAAD2} \
+			${MWP_JPEG} \
+			${MWP_LIBUNGIF} \
+			${MWP_LIBPNG} \
+			${MWP_FBV} \
+			${MWP_TIFF} \
 			|| exit 1
 			exit 0
 
-			${MWP_LIBTOOL} \
-			${MWP_GETTEXT} \
-			${MWP_MPG123} \
-			${MWP_FAAD2} \
 			${MWP_MPLAYER} \
 			${MWP_OPENSSL} \
 			${MWP_DBUS} \
-			${MWP_JPEG} \
-			${MWP_LIBUNGIF} \
-			${MWP_TIFF} \
-			${MWP_LIBPNG} \
-			${MWP_FBV} \
 			${MWP_LIBXML2} \
 			${MWP_FREETYPE}  \
 			${MWP_SDL} \
@@ -147,6 +145,8 @@ do
 			${MWP_USB_UTILS} \
 			${MWP_PRBOOM} \
 			${MWP_VIM} \
+			${MWP_LIBTOOL} \
+			${MWP_GETTEXT} \
 			|| exit 1
 		;;
 
