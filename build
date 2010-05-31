@@ -100,16 +100,17 @@ do
 		echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
 			|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
 
+		# BuildEmulator && \
+
 		BuildUtils && \
-		BuildEmulator && \
 		BuildToolchain || exit 1
 	    ;;
 
 	3)  BuildKernel || exit 1
 		;;
 
-	4)  InitRoot || exit 1
-		# BuildRoot_BusyBox || exit 1
+	4)
+		# BuildBaseRoot || exit 1
 		BuildRoot_CoreUtils || exit 1
 		;;
 

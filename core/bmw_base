@@ -15,6 +15,7 @@ TFTP_PATH=/var/lib/tftpboot
 MAXWIT_TOP=${HOME}/maxwit
 SYSROOT_PATH=${MAXWIT_TOP}/sysroot
 ROOTFS_PATH=${MAXWIT_TOP}/rootfs
+# ROOTFS_PATH=${MAXWIT_TOP}/sysroot
 BUILD_PATH=${MAXWIT_TOP}/build
 IMAGES_PATH=${MAXWIT_TOP}/images
 
@@ -48,7 +49,7 @@ fi
 
 
 # fixme: prompt
-TARGET_SOC="S3C6410"
+TARGET_SOC="AT91SAM9263"
 TARGET_SOC=`echo ${TARGET_SOC} | tr A-Z a-z`
 
 case "${TARGET_SOC}" in
@@ -94,6 +95,7 @@ case "${TARGET_SOC}" in
 		;;
 esac
 
+export SYSROOT_PATH ROOTFS_PATH BUILD_PLAT TARGET_PLAT
 
 [ -z "${GLIBC_BUILDING_GCC}" ] && GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc"
 [ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}

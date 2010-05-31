@@ -62,7 +62,7 @@ BuildAppPkg()
 	esac
 
 	# fixme
-	${SB2_CMD} ${subdir}/build.sh || exit 1
+	${subdir}/build.sh || exit 1
 	if test -x  ${subdir}/setup.sh; then
 		cd ${subdir} && \
 		. ./setup.sh || exit 1
@@ -85,13 +85,9 @@ BuildAppList()
 }
 
 
-InitRoot()
+BuildBaseRoot()
 {
-	local SB2_CONF_PATH="${HOME}/.scratchbox2"
-	local SB2_CURR_CONF="maxwit-linux"
 	local dir
-
-	CheckMap
 
 	echo -n "Initializing rootfs "
 
@@ -107,16 +103,16 @@ InitRoot()
 
 	cd ${ROOTFS_PATH}
 
-	mkdir -p etc/init.d etc/udev/rules.d bin sbin usr/bin usr/include usr/games proc sys dev root home tmp
+	mkdir -p etc/init.d etc/udev/rules.d bin sbin lib usr/lib usr/bin usr/include usr/games proc sys dev root home tmp
 	for i in 1 2 3 4 5 6 7 8
 	do
 		mkdir -p usr/share/man/man${i}
 	done
 
-	cp -a ${SYSROOT_PATH}/lib .
+	cp -a ${SYSROOT_PATH}/lib/*.so* lib/
 	echo -n "."
-	cp -a ${SYSROOT_PATH}/usr/${TARGET_PLAT}/lib usr/
-	cp -a ${SYSROOT_PATH}/usr/lib usr/
+	cp -a ${SYSROOT_PATH}/usr/${TARGET_PLAT}/lib/*.so* usr/lib/
+	cp -a ${SYSROOT_PATH}/usr/lib/*.so* usr/lib/
 	echo -n "."
 
 	if [ ${USER} = root ]; then
@@ -126,10 +122,8 @@ InitRoot()
 		[ -e ${ROOTFS_PATH}/dev/null ] || \
 			mknod ${ROOTFS_PATH}/dev/null c 1 3
 	else
-		echo -n "(TODO: create device nodes manually!)"
+		echo "(TODO: create device nodes manually!)"
 	fi
-
-	cp /etc/group ${ROOTFS_PATH}/etc # fixme
 
 cat > ${ROOTFS_PATH}/etc/init.d/rcS << EOF
 #!/bin/sh
@@ -150,69 +144,8 @@ mount -t tmpfs tmpfs  /tmp
 
 EOF
 
-chmod 755 ${ROOTFS_PATH}/etc/init.d/rcS
+	chmod 755 ${ROOTFS_PATH}/etc/init.d/rcS
 
-	echo " OK."
-
-	echo "Initializing scratchbox2:"
-
-	rm -rf ${SB2_CONF_PATH}
-	mkdir -p ${SB2_CONF_PATH}
-
-	cp ${SRC_PATH}/${SBP_LIBTOOL}.tar.gz ${SB2_CONF_PATH} || exit 1
-
-	cd ${ROOTFS_PATH}
-
-	# sb2-init ${SB2_CURR_CONF} ${TARGET_PLAT}-gcc || exit 1
-	# SB2_EMU=`which qemu-${TARGET_ARCH}`
-	SB2_EMU="${MWEMU_ROOT}/usr/bin/qemu-${TARGET_ARCH}"
-	if [ -x "${SB2_EMU}" ]; then
-		echo "sb2: using emulator \"${SB2_EMU}\""
-	else
-		echo "${SB2_EMU} NOT found in PATH:"
-		exit 1
-	fi
-
-	sb2-init -c ${SB2_EMU} ${SB2_CURR_CONF} ${TARGET_PLAT}-gcc || exit 1
-	echo
-}
-
-
-# fixme
-BuildBash()
-{
-	Unpack ${MWP_BASH} application
-
-	sb2 ./configure \
-		--prefix=/usr \
-		--exec-prefix=/ \
-		--sysconfdir=/etc \
-		|| exit 1
-
-	sb2 make || exit 1
-
-	sb2 -m install make install || exit 1
-
-	ln -sf bash ${ROOTFS_PATH}/bin/sh || exit 1
-	cp -v ${APP_TOP}/${MWP_BASH}/bashrc ${ROOTFS_PATH}/root/.bashrc && \
-	cp -v ${APP_TOP}/${MWP_BASH}/bash_profile ${ROOTFS_PATH}/root/.bash_profile
-}
-
-
-BuildPerl()
-{
-	Unpack ${MWP_PERL} application
-
-	sb2 ./Configure -des -Dprefix=/usr \
-		|| exit 1
-
-	sb2 make || exit 1
-	sb2 -m install make install || exit 1
-}
-
-
-BuildBusyBox()
-{
 	local BB_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- CONFIG_PREFIX=${ROOTFS_PATH}"
 
 	Unpack ${MWP_BUSYBOX} application || exit 1
@@ -221,14 +154,8 @@ BuildBusyBox()
 	make ${BB_OPT} defconfig || exit 1
 
 	make ${BB_OPT} install || exit 1
-}
 
-
-BuildRoot_BusyBox()
-{
-	BuildBusyBox
-
- 	BuildAppList ${BUILD_TOOLS_LIST}
+	BuildAppPkg ${MWP_UDEV}
 }
 
 
@@ -251,14 +178,9 @@ BuildRoot_CoreUtils()
 				${MWP_UDEV} \
 				"
 
-	# must go first
-	BuildBash
-
-	# build grep
-	# fixme
-	Unpack ${MWP_GREP} application
-	./configure --prefix=/usr && \
-	sb2 make && make DESTDIR=${ROOTFS_PATH} install || exit 1
+	pkg_list="\
+				${MWP_UDEV} \
+				"
 
 	BuildAppList ${pkg_list}
 }
@@ -274,7 +196,7 @@ RunQemu()
 		EXTRA_COMMAND_LINE="console=ttyAMA0" # fixme
 	fi
 
-	${MWEMU_ROOT}/usr/bin/qemu-system-${TARGET_ARCH} -M ${QEMU_MACH} -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}"
+	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw init=/hello nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}"
 }
 
 
