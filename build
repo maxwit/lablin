@@ -128,20 +128,20 @@ do
 			${MWP_LIBPNG} \
 			${MWP_FBV} \
 			${MWP_TIFF} \
+			${MWP_FREETYPE}  \
+			${MWP_DFB} \
 			|| exit 1
 			exit 0
 
 			${MWP_MPLAYER} \
+			${MWP_DFB_EX} \
 			${MWP_OPENSSL} \
 			${MWP_DBUS} \
 			${MWP_LIBXML2} \
-			${MWP_FREETYPE}  \
 			${MWP_SDL} \
 			${MWP_SDL_IMAGE} \
 			${MWP_SDL_TTF} \
 			${MWP_SDL_MIXER} \
-			${MWP_DFB} \
-			${MWP_DFB_EX} \
 			${MWP_USB_UTILS} \
 			${MWP_PRBOOM} \
 			${MWP_VIM} \
