@@ -50,23 +50,19 @@ BuildAppPkg()
 
 	Unpack ${1} application
 
-	# cd ${srcdir}
-
-	case ${1} in
-	tslib*)
-		./autogen.sh || exit 1
-		;;
-
-	*)
-		;;
-	esac
-
 	# fixme
-	${subdir}/build.sh || exit 1
+	if test -x  ${subdir}/build.sh; then
+		${subdir}/build.sh || exit 1
+	else
+		./configure --prefix=/usr --host=${TARGET_PLAT} --build=${BUILD_PLAT} && \
+		make && make DESTDIR=${ROOTFS_PATH} install || exit 1
+	fi
+
 	if test -x  ${subdir}/setup.sh; then
 		cd ${subdir} && \
 		. ./setup.sh || exit 1
 	fi
+
 	touch ${srcdir}/${BUILT_TAG}
 	echo
 
@@ -178,10 +174,6 @@ BuildRoot_CoreUtils()
 				${MWP_UDEV} \
 				"
 
-	pkg_list="\
-				${MWP_UDEV} \
-				"
-
 	BuildAppList ${pkg_list}
 }
 
@@ -196,7 +188,7 @@ RunQemu()
 		EXTRA_COMMAND_LINE="console=ttyAMA0" # fixme
 	fi
 
-	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw init=/hello nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}"
+	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}"
 }
 
 

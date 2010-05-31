@@ -100,12 +100,12 @@ export SYSROOT_PATH ROOTFS_PATH BUILD_PLAT TARGET_PLAT
 [ -z "${GLIBC_BUILDING_GCC}" ] && GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc"
 [ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}
 
-grep "${MWEMU_ROOT}" ~/.bashrc > /dev/null \
-	|| echo "export PATH=${MWEMU_ROOT}/usr/bin:\${PATH}" >> ~/.bashrc
-
-echo ${PATH} | grep "${MWEMU_ROOT}" > /dev/null \
-	|| export PATH=${MWEMU_ROOT}/usr/bin:${PATH}
-
+# grep "${MWEMU_ROOT}" ~/.bashrc > /dev/null \
+# 	|| echo "export PATH=${MWEMU_ROOT}/usr/bin:\${PATH}" >> ~/.bashrc
+#
+# echo ${PATH} | grep "${MWEMU_ROOT}" > /dev/null \
+# 	|| export PATH=${MWEMU_ROOT}/usr/bin:${PATH}
+#
 grep "${SYSROOT_PATH}" ~/.bashrc > /dev/null \
 	|| echo "export PATH=\${PATH}:${SYSROOT_PATH}/usr/bin" >> ~/.bashrc
 

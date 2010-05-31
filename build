@@ -82,7 +82,7 @@ do
 		;;
 
 	1)
-		sudo mkdir -p ${TFTP_PATH} && \
+		sudo mkdir -vp ${TFTP_PATH} && \
 		sudo chmod 777 ${TFTP_PATH}
 
 		grep "${MAXWIT_TOP}" /etc/exports > /dev/null 2>&1 || \
@@ -110,15 +110,18 @@ do
 		;;
 
 	4)
-		# BuildBaseRoot || exit 1
-		BuildRoot_CoreUtils || exit 1
+		BuildBaseRoot || exit 1
+		# BuildRoot_CoreUtils || exit 1
 		;;
 
 	5)  BuildAppList \
 			${MWP_TSLIB} \
+			${MWP_ALSA_UTILS} \
+			|| exit 1
+			exit 0
+
 			${MWP_LIBTOOL} \
 			${MWP_GETTEXT} \
-			${MWP_ALSA_UTILS} \
 			${MWP_ALSA_LIB} \
 			${MWP_MADPLAY} \
 			${MWP_LIBMAD} \
