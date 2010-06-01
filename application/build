@@ -195,7 +195,7 @@ RunQemu()
 		EXTRA_COMMAND_LINE="console=ttyAMA0" # fixme
 	fi
 
-	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}"
+	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log
 }
 
 

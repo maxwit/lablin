@@ -2,7 +2,9 @@
 #
 #
 
-ac_cv_path_PKG_CONFIG=pkg-config 
+
+# ac_cv_path_PKG_CONFIG=pkg-config
+
 ./configure \
 	--prefix=${SYSROOT_PATH}/usr \
 	--build=${BUILD_PLAT} \

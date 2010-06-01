@@ -132,15 +132,16 @@ do
 			${MWP_DFB} \
 			${MWP_DFB_EX} \
 			${MWP_SDL} \
+			${MWP_SDL_MIXER} \
+			${MWP_SDL_IMAGE} \
+			${MWP_SDL_TTF} \
 			${MWP_LIBUSB} \
 			${MWP_MPLAYER} \
 			${MWP_PRBOOM} \
+			${MWP_USB_UTILS} \
 			|| exit 1
 			exit 0
 
-			${MWP_SDL_IMAGE} \
-			${MWP_SDL_TTF} \
-			${MWP_SDL_MIXER} \
 			${MWP_OPENSSL} \
 			${MWP_DBUS} \
 			${MWP_LIBXML2} \

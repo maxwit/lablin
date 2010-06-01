@@ -24,6 +24,5 @@ TSLIB_LIBS=${SYSROOT_PATH}/usr/lib \
 make || exit
 make DESTDIR=${SYSROOT_PATH} install || exit
 
-#sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${CROSS_PC_PATH}/direct*.pc && \
-#sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${CROSS_PC_PATH}/fusion*.pc || exit 1
-
+sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${SYSROOT_PATH}/usr/lib/pkgconfig/direct*.pc && \
+sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${SYSROOT_PATH}/usr/lib/pkgconfig/fusion*.pc || exit 1

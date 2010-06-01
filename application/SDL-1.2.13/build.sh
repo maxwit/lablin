@@ -17,6 +17,8 @@ hardcode_into_libs=no \
     --with-alsa-inc-prefix=${SYSROOT_PATH}/usr/include \
 	|| exit 1
 
+sed -i "s:^prefix=.*:prefix=${SYSROOT_PATH}/usr:" sdl-config
+
 make && \
 make DESTDIR=${SYSROOT_PATH} install  || exit 1
 

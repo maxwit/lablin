@@ -14,3 +14,4 @@
 
 make || exit 1
 make DESTDIR=${SYSROOT_PATH} install || exit 1
+sed -i "s:^libdir=.*:libdir=${SYSROOT_PATH}/usr/lib:" ${SYSROOT_PATH}/usr/lib/libpng12.la
