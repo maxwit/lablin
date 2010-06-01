@@ -25,7 +25,7 @@ BuildKernel()
 		;;
 	esac
 
-	mkdir -vp ${IMAGES_PATH}
+	mkdir -vp ${IMAGES_PATH} ${BUILD_PATH}/kernel
 
 	Unpack ${MWP_KERNEL} kernel
 
