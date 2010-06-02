@@ -13,14 +13,14 @@ hardcode_into_libs=no \
 	--disable-video-opengl \
 	--disable-video-directfb \
     --disable-input-tslib \
-    --with-alsa-prefix=${SYSROOT_PATH}/usr/lib/ \
-    --with-alsa-inc-prefix=${SYSROOT_PATH}/usr/include \
+    --with-alsa-prefix=${ROOTFS_PATH}/usr/lib/ \
+    --with-alsa-inc-prefix=${ROOTFS_PATH}/usr/include \
 	|| exit 1
 
-sed -i "s:^prefix=.*:prefix=${SYSROOT_PATH}/usr:" sdl-config
+sed -i "s:^prefix=.*:prefix=${ROOTFS_PATH}/usr:" sdl-config
 
 make && \
-make DESTDIR=${SYSROOT_PATH} install  || exit 1
+make DESTDIR=${ROOTFS_PATH} install  || exit 1
 
 #echo
 #echo "Building SDL test case"
@@ -29,9 +29,9 @@ make DESTDIR=${SYSROOT_PATH} install  || exit 1
 #	--prefix=/usr \
 #    --build=${BUILD_PLAT} \
 #	--host=${TARGET_PLAT} \
-#	--with-sdl-exec-prefix=${SYSROOT_PATH}/usr \
+#	--with-sdl-exec-prefix=${ROOTFS_PATH}/usr \
 #	--enable-sdltest  || exit
 #
 #make && \
-#make DESTDIR=${SYSROOT_PATH} install  || exit
+#make DESTDIR=${ROOTFS_PATH} install  || exit
 #echo "OK"

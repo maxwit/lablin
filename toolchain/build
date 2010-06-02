@@ -45,7 +45,7 @@ BuildToolchain()
 
 
 	cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
-	KERN_OPT="ARCH=${TARGET_ARCH} INSTALL_HDR_PATH=${SYSROOT_PATH}/usr"
+	KERN_OPT="ARCH=${TARGET_ARCH} INSTALL_HDR_PATH=${ROOTFS_PATH}/usr"
 	# make ${KERN_OPT} distclean
 	# make ${KERN_OPT} at91sam9263ek_defconfig #fixme
 	# sed -i 's/# CONFIG_AEABI.*/CONFIG_AEABI=y/' .config
@@ -61,7 +61,7 @@ BuildToolchain()
 		--build=${BUILD_PLAT} \
 		--host=${BUILD_PLAT} \
 		--target=${TARGET_PLAT} \
-		--with-sysroot=${SYSROOT_PATH} \
+		--with-sysroot=${ROOTFS_PATH} \
 		--with-gmp=${UTILS_ROOT}/usr \
 		--with-mpfr=${UTILS_ROOT}/usr \
 		--disable-nls \
@@ -71,9 +71,9 @@ BuildToolchain()
 		|| exit 1
 
 	make && \
-	make DESTDIR=${SYSROOT_PATH} install || exit 1
+	make DESTDIR=${TOOLCHAIN_PATH} install || exit 1
 
-	cp -v ../${MWP_BINUTILS}/include/libiberty.h ${SYSROOT_PATH}/usr/include
+	cp -v ../${MWP_BINUTILS}/include/libiberty.h ${ROOTFS_PATH}/usr/include
 
 
 	CreatBuildDir gcc-build-1
@@ -83,7 +83,7 @@ BuildToolchain()
 		--build=${BUILD_PLAT} \
 		--host=${BUILD_PLAT} \
 		--target=${TARGET_PLAT} \
-		--with-sysroot=${SYSROOT_PATH} \
+		--with-sysroot=${ROOTFS_PATH} \
 		--with-gmp=${UTILS_ROOT}/usr \
 		--with-mpfr=${UTILS_ROOT}/usr \
 		--without-headers \
@@ -101,12 +101,12 @@ BuildToolchain()
 		${GCC_CPU_OPT} \
 		|| exit 1
 
-	make && make DESTDIR=${SYSROOT_PATH} install || exit 1
+	make && make DESTDIR=${TOOLCHAIN_PATH} install || exit 1
 
 
 	CreatBuildDir glibc-build
 
-	echo "install_root=${SYSROOT_PATH}" > configparms
+	echo "install_root=${ROOTFS_PATH}" > configparms
 	libc_cv_forced_unwind=yes \
 	libc_cv_c_cleanup=yes \
 	libc_cv_gnu99_inline=yes \
@@ -123,8 +123,8 @@ BuildToolchain()
 		--with-tls \
 		--enable-kernel=2.6.17 \
 		--with-__thread \
-		--with-binutils=${SYSROOT_PATH}/usr/bin \
-		--with-headers=${SYSROOT_PATH}/usr/include \
+		--with-binutils=${TOOLCHAIN_PATH}/usr/bin \
+		--with-headers=${ROOTFS_PATH}/usr/include \
 		|| exit 1
 
 	make && make install || exit 1
@@ -137,7 +137,7 @@ BuildToolchain()
 		--build=${BUILD_PLAT} \
 		--host=${BUILD_PLAT} \
 		--target=${TARGET_PLAT} \
-		--with-sysroot=${SYSROOT_PATH} \
+		--with-sysroot=${ROOTFS_PATH} \
 		--with-gmp=${UTILS_ROOT}/usr \
 		--with-mpfr=${UTILS_ROOT}/usr \
 		--disable-multilib \
@@ -152,10 +152,10 @@ BuildToolchain()
 		|| exit 1
 
 	make AS_FOR_TARGET=${TARGET_PLAT}-as LD_FOR_TARGET=${TARGET_PLAT}-ld || exit 1
-	make DESTDIR=${SYSROOT_PATH} install || exit 1
+	make DESTDIR=${TOOLCHAIN_PATH} install || exit 1
 
 	# fixme
-	cd ${SYSROOT_PATH}/usr/bin
+	cd ${TOOLCHAIN_PATH}/usr/bin
 	for file in `ls ${TARGET_PLAT}-*`; do
 		ln -vs ${file} ${TARGET_ARCH}-linux${file##${TARGET_PLAT}}
 		ln -vs ${file} ${file##${TARGET_PLAT}-}
@@ -164,7 +164,12 @@ BuildToolchain()
 	ln -vs ${TARGET_PLAT}-gcc ${TARGET_PLAT}-cc
 	ln -vs ${TARGET_PLAT}-gcc cc
 
+	echo -n "Archive GNU Toolchain ..."
+	cd ${MAXWIT_TOP}
+	dn=`basename ${TOOLCHAIN_PATH}`
+	tar cf ${dn}.tar ${dn}
 	echo
+
 	echo "Toolchain \"${TARGET_PLAT}\" has been built successfully!"
 	echo
 }

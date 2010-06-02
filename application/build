@@ -61,7 +61,7 @@ BuildAppPkg()
 			|| exit 1
 
 		make && \
-		make DESTDIR=${SYSROOT_PATH} install || exit 1
+		make DESTDIR=${ROOTFS_PATH} install || exit 1
 		# make DESTDIR=${ROOTFS_PATH} install || exit 1
 	fi
 
@@ -100,9 +100,9 @@ BuildBaseRoot()
 		echo -n "."
 	done
 
-	rm -rf ${ROOTFS_PATH}
-	mkdir -p ${ROOTFS_PATH}
-	echo -n "."
+	# rm -rf ${ROOTFS_PATH}
+	# mkdir -p ${ROOTFS_PATH}
+	# echo -n "."
 
 	cd ${ROOTFS_PATH}
 
@@ -112,11 +112,13 @@ BuildBaseRoot()
 		mkdir -p usr/share/man/man${i}
 	done
 
-	cp -a ${SYSROOT_PATH}/lib/*.so* lib/
+	cp -a ${TOOLCHAIN_PATH}/usr/${TARGET_PLAT}/lib/*.so* lib/
 	echo -n "."
-	cp -a ${SYSROOT_PATH}/usr/${TARGET_PLAT}/lib/*.so* usr/lib/
-	cp -a ${SYSROOT_PATH}/usr/lib/*.so* usr/lib/
-	echo -n "."
+
+	# cp -a ${ROOTFS_PATH}/lib/*.so* lib/
+	# cp -a ${ROOTFS_PATH}/usr/${TARGET_PLAT}/lib/*.so* usr/lib/
+	# cp -a ${ROOTFS_PATH}/usr/lib/*.so* usr/lib/
+	# echo -n "."
 
 	if [ ${USER} = root ]; then
 		[ -e ${ROOTFS_PATH}/dev/console ] || \
@@ -132,6 +134,7 @@ cat > ${ROOTFS_PATH}/etc/init.d/rcS << EOF
 #!/bin/sh
 
 [ -e /dev/console ] || mknod /dev/console c 5 1
+[ -e /dev/null ] || mknod /dev/null c 5 1
 
 echo
 echo "    ***********************************"

@@ -14,4 +14,4 @@
 sed -i '/rpl_malloc/d' config.h
 
 make || exit
-make DESTDIR=${SYSROOT_PATH} install || exit
+make DESTDIR=${ROOTFS_PATH} install || exit

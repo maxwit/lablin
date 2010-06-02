@@ -13,5 +13,5 @@
 
 make || exit 1
 
-make DESTDIR=${SYSROOT_PATH} install || exit 1
+make DESTDIR=${ROOTFS_PATH} install || exit 1
 

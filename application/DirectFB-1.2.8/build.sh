@@ -6,8 +6,8 @@
 #ac_cv_header_asm_page_h=no \
 #hardcode_into_libs=no \
 
-TSLIB_CFLAGS=${SYSROOT_PATH}/usr/include \
-TSLIB_LIBS=${SYSROOT_PATH}/usr/lib \
+TSLIB_CFLAGS=${ROOTFS_PATH}/usr/include \
+TSLIB_LIBS=${ROOTFS_PATH}/usr/lib \
 ./configure \
 	--prefix=/usr \
 	--build=${BUILD_PLAT} \
@@ -22,7 +22,7 @@ TSLIB_LIBS=${SYSROOT_PATH}/usr/lib \
     --disable-video4linux2 || exit 1
 
 make || exit
-make DESTDIR=${SYSROOT_PATH} install || exit
+make DESTDIR=${ROOTFS_PATH} install || exit
 
-sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${SYSROOT_PATH}/usr/lib/pkgconfig/direct*.pc && \
-sed -i "s:^prefix=/usr$:prefix=${SYSROOT_PATH}/usr:" ${SYSROOT_PATH}/usr/lib/pkgconfig/fusion*.pc || exit 1
+sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/direct*.pc && \
+sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/fusion*.pc || exit 1

@@ -43,7 +43,7 @@ hardcode_into_libs=no \
 
 make >> ${LOG_PATH}/${GPM} 2>&1 
 
-make DESTDIR=${SYSROOT_PATH} install >> ${LOG_PATH}/${GPM} 2>&1 || exit
+make DESTDIR=${ROOTFS_PATH} install >> ${LOG_PATH}/${GPM} 2>&1 || exit
 echo "OK."
 
 

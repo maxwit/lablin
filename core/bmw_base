@@ -13,9 +13,9 @@ SRC_PATH=/work/source
 TFTP_PATH=/var/lib/tftpboot
 
 MAXWIT_TOP=${HOME}/maxwit
-SYSROOT_PATH=${MAXWIT_TOP}/sysroot
-ROOTFS_PATH=${MAXWIT_TOP}/rootfs
-# ROOTFS_PATH=${MAXWIT_TOP}/sysroot
+ROOTFS_PATH=${MAXWIT_TOP}/sysroot
+TOOLCHAIN_PATH=${MAXWIT_TOP}/toolchain
+# TOOLCHAIN_PATH=${MAXWIT_TOP}/sysroot
 BUILD_PATH=${MAXWIT_TOP}/build
 IMAGES_PATH=${MAXWIT_TOP}/images
 
@@ -95,7 +95,7 @@ case "${TARGET_SOC}" in
 		;;
 esac
 
-export SYSROOT_PATH ROOTFS_PATH BUILD_PLAT TARGET_PLAT
+export ROOTFS_PATH TOOLCHAIN_PATH BUILD_PLAT TARGET_PLAT
 
 [ -z "${GLIBC_BUILDING_GCC}" ] && GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc"
 [ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}
@@ -106,14 +106,14 @@ export SYSROOT_PATH ROOTFS_PATH BUILD_PLAT TARGET_PLAT
 # echo ${PATH} | grep "${MWEMU_ROOT}" > /dev/null \
 # 	|| export PATH=${MWEMU_ROOT}/usr/bin:${PATH}
 #
-grep "${SYSROOT_PATH}" ~/.bashrc > /dev/null \
-	|| echo "export PATH=\${PATH}:${SYSROOT_PATH}/usr/bin" >> ~/.bashrc
+grep "${TOOLCHAIN_PATH}" ~/.bashrc > /dev/null \
+	|| echo "export PATH=\${PATH}:${TOOLCHAIN_PATH}/usr/bin" >> ~/.bashrc
 
-echo ${PATH} | grep "${SYSROOT_PATH}" > /dev/null \
-	|| export PATH=${PATH}:${SYSROOT_PATH}/usr/bin
+echo ${PATH} | grep "${TOOLCHAIN_PATH}" > /dev/null \
+	|| export PATH=${PATH}:${TOOLCHAIN_PATH}/usr/bin
 
 
-# mkdir -vp ${SYSROOT_PATH} ${ROOTFS_PATH} ${IMAGES_PATH} 
+# mkdir -vp ${ROOTFS_PATH} ${TOOLCHAIN_PATH} ${IMAGES_PATH} 
 
 # $1: pkg name
 # $2: category

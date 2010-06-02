@@ -3,7 +3,7 @@
 #
 
 ./configure \
-	--prefix=${SYSROOT_PATH}/usr \
+	--prefix=${ROOTFS_PATH}/usr \
 	|| exit 1
 
 sed -i "s/=gcc/=${TARGET_PLAT}-gcc/" Makefile

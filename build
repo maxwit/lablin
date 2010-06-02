@@ -64,6 +64,10 @@ QemuSetup()
 #	chmod a+x /etc/qemu-ifdown
 }
 
+echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
+	|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
+
+export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
 while true
 do
@@ -97,9 +101,6 @@ do
 		;;
 
 	2)
-		echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
-			|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
-
 		# BuildEmulator && \
 
 		BuildUtils && \

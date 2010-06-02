@@ -10,5 +10,5 @@ sed -i "s/\<cc\>/${TARGET_PLAT}-gcc/" configure
 sed -i '/mandir/d' Makefile || exit 1
 
 make CC=${TARGET_PLAT}-gcc && \
-make DESTDIR=${SYSROOT_PATH} install || exit 1
+make DESTDIR=${ROOTFS_PATH} install || exit 1
 

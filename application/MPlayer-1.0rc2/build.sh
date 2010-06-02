@@ -11,7 +11,7 @@
 sed -i 's/\(.*ac_l_default.*= { "\)/\1mad/' libmpcodecs/dec_audio.c
 
 ./configure \
-	--prefix=${SYSROOT_PATH}/usr \
+	--prefix=${ROOTFS_PATH}/usr \
 	--target=arm-linux \
 	--enable-cross-compile \
 	--host-cc=gcc \

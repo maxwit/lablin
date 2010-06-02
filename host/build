@@ -62,8 +62,6 @@ BuildUtils()
 	echo
 
 	for pkg in \
-		${MWP_PKG_CONFIG} \
-		${MWP_PATCH} \
 		${MWP_GETTEXT} \
 		${MWP_M4} \
 		${MWP_LIBTOOL} \
@@ -82,6 +80,8 @@ BuildUtils()
 	done
 
 #	sed -i "s:\(.*my.*ENV.*\)libtoolize:\1${UTILS_ROOT}/bin/libtoolize:" ${UTILS_PREFIX}/bin/autoreconf || exit 1
+# ${MWP_PKG_CONFIG} \
+# ${MWP_PATCH} \
 }
 
 

@@ -25,4 +25,4 @@ CFLAGS=-DUSE_INPUT_API \
 # sed -i 's/# \(module_raw input\)/\1/' etc/ts.conf
 
 make && \
-make DESTDIR=${SYSROOT_PATH} install || exit 1
+make DESTDIR=${ROOTFS_PATH} install || exit 1
