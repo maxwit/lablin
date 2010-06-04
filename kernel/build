@@ -51,17 +51,15 @@ BuildKernel()
 	case "${TARGET_ARCH}" in
 	x86 | i386 | x86_64)
 		cp -v ${PWD}/arch/${TARGET_ARCH}/boot/bzImage ${IMAGES_PATH}/bzImage.${TARGET_MACH}
-		cp -v ${IMAGES_PATH}/bzImage.${TARGET_MACH} ${TFTP_PATH}/bzImage
+		# cp -v ${IMAGES_PATH}/bzImage.${TARGET_MACH} ${TFTP_PATH}/bzImage
 		;;
 
 	mips*)
 		cp vmlinux ${IMAGES_PATH}/vmlinux.${TARGET_MACH}
-		cp -v ${IMAGES_PATH}/vmlinux.${TARGET_MACH} ${TFTP_PATH}/vmlinux
 		;;
 
 	*)
 		cp arch/${TARGET_ARCH}/boot/zImage ${IMAGES_PATH}/zImage.${TARGET_MACH}
-		cp -v ${IMAGES_PATH}/zImage.${TARGET_MACH} ${TFTP_PATH}/zImage
 		;;
 	esac
 }

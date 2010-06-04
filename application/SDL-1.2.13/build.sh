@@ -9,6 +9,7 @@ hardcode_into_libs=no \
 	--build=${BUILD_PLAT} \
 	--host=${TARGET_PLAT} \
 	--disable-video-x11 \
+	--disable-pulseaudio \
 	--disable-esd \
 	--disable-video-opengl \
 	--disable-video-directfb \
@@ -21,6 +22,7 @@ sed -i "s:^prefix=.*:prefix=${ROOTFS_PATH}/usr:" sdl-config
 
 make && \
 make DESTDIR=${ROOTFS_PATH} install  || exit 1
+sed -i "s:^libdir=.*:libdir=${ROOTFS_PATH}/usr/lib:" ${ROOTFS_PATH}/usr/lib/libSDL.la
 
 #echo
 #echo "Building SDL test case"
