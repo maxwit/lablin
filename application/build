@@ -133,9 +133,6 @@ BuildBaseRoot()
 cat > ${ROOTFS_PATH}/etc/init.d/rcS << EOF
 #!/bin/sh
 
-[ -e /dev/console ] || mknod /dev/console c 5 1
-[ -e /dev/null ] || mknod /dev/null c 5 1
-
 echo
 echo "    ***********************************"
 echo "    *    Welcome to MaxWit Lablin!    *"
@@ -143,10 +140,12 @@ echo "    *    [ http://www.maxwit.com ]    *"
 echo "    ***********************************"
 echo
 
-mount -t sysfs sysfs  /sys
 mount -t tmpfs tmpfs  /dev
+mount -t sysfs sysfs  /sys
 mount -t proc  proc   /proc
 mount -t tmpfs tmpfs  /tmp
+
+[ -e /dev/null ] || mknod /dev/null c 5 1
 
 EOF
 
