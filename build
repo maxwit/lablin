@@ -17,12 +17,6 @@ cd ${MW_TOP_DIR}
 MW_TOP_DIR=${PWD}
 
 
-echo ${PWD} | grep "^${HOME}" > /dev/null 2>&1 || \
-{
-	echo "MaxWit must be built under \$HOME dir!"
-	exit 1
-}
-
 . core/bmw_menu
 . core/bmw_pkgs
 . core/bmw_base
