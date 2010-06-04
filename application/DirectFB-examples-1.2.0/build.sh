@@ -5,8 +5,9 @@
 
 # ac_cv_path_PKG_CONFIG=pkg-config
 
+DIRECTFB_CFLAGS="-I/home/conke/maxwit/sysroot/usr/include/directfb" \
 ./configure \
-	--prefix=${ROOTFS_PATH}/usr \
+	--prefix=/usr \
 	--build=${BUILD_PLAT} \
 	--host=${TARGET_PLAT} \
 	|| exit 1

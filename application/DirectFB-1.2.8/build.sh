@@ -24,5 +24,5 @@ TSLIB_LIBS=${ROOTFS_PATH}/usr/lib \
 make || exit
 make DESTDIR=${ROOTFS_PATH} install || exit
 
-sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/direct*.pc && \
-sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/fusion*.pc || exit 1
+# sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/direct*.pc && \
+# sed -i "s:^prefix=/usr$:prefix=${ROOTFS_PATH}/usr:" ${ROOTFS_PATH}/usr/lib/pkgconfig/fusion*.pc || exit 1

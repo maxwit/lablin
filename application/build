@@ -26,12 +26,12 @@ BuildAppPkg()
 	local subdir="${APP_TOP}/${1}"
 	local srcdir="${APP_BUILD_PATH}/${1}"
 
-	if [ -d "${subdir}" ]; then
-		cd "${subdir}" 
-	else
-		echo "\"${subdir}\" does NOT exist!"
-		return 1
-	fi
+#	if [ -d "${subdir}" ]; then
+#		cd "${subdir}"
+#	else
+#		echo "\"${subdir}\" does NOT exist!"
+#		return 1
+#	fi
 
 	if [ -e "${srcdir}/${BUILT_TAG}" ]; then
 		echo "\"${1}\" has been built."
@@ -39,8 +39,8 @@ BuildAppPkg()
 		return 0
 	fi
 
-	if [ -f dep ]; then
-		for df in `cat dep`
+	if [ -f ${subdir}/dep ]; then
+		for df in `cat ${subdir}/dep`
 		do
 			BuildAppPkg ${df} || return 1
 		done
