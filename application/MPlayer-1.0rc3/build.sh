@@ -7,7 +7,6 @@
 #
 
 
-
 sed -i 's/\(.*ac_l_default.*= { "\)/\1mad/' libmpcodecs/dec_audio.c
 
 ./configure \
@@ -19,8 +18,9 @@ sed -i 's/\(.*ac_l_default.*= { "\)/\1mad/' libmpcodecs/dec_audio.c
 	--as=${TARGET_PLAT}-as \
 	--ar=${TARGET_PLAT}-ar \
 	--ranlib=${TARGET_PLAT}-ranlib \
-	|| exit
+	--enable-armv5te \
+	|| exit 1
 
 sed -i '/INSTALLSTRIP/d' config.mak
 
-make && make install || exit
+make && make install || exit 1
