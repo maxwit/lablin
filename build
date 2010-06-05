@@ -51,6 +51,7 @@ QemuSetup()
 
 echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
 	|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
+export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
 
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
