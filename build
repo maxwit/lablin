@@ -117,8 +117,7 @@ do
 	ShowMenu "[MaxWit Lablin Building Menu] (configured for ${TARGET_SOC})" \
 			"Host Check & Setup (sudo)" \
 			"Build GNU Toolchain and Emulator" \
-			"Build Linux Kernel (${MWP_KERNEL})" \
-			"Build Basic System (busybox or coreutils)" \
+			"Build Basic System (${MWP_KERNEL} & busybox)" \
 			"Build Applications (Lib/App/Games)" \
 			"Testing on QEMU" \
 			"Create File System Images (yaffs2/jffs2/cramfs,etc.)"
@@ -150,15 +149,13 @@ do
 		BuildToolchain || exit 1
 	    ;;
 
-	3)  BuildKernel || exit 1
-		;;
-
-	4)
+	3)
 		BuildBaseRoot || exit 1
+		BuildKernel || exit 1
 		# BuildRoot_CoreUtils || exit 1
 		;;
 
-	5)  BuildAppList \
+	4)  BuildAppList \
 			${MWP_TSLIB} \
 			${MWP_ALSA_UTILS} \
 			${MWP_ALSA_LIB} \
@@ -194,10 +191,10 @@ do
 			|| exit 1
 		;;
 
-	6) RunQemu
+	5) RunQemu
 		;;
 
-	7) BuildImage
+	6) BuildImage
 		;;
 
 	*)

@@ -155,7 +155,7 @@ EOF
 
 	Unpack ${MWP_BUSYBOX} application || exit 1
 
-	cp ${APP_TOP}/${MWP_BUSYBOX}/defconfig ${APP_BUILD_PATH}/${MWP_BUSYBOX}/scripts/ -v && \
+	cp ${APP_TOP}/${MWP_BUSYBOX}/defconfig ${APP_BUILD_PATH}/${MWP_BUSYBOX}/scripts/ && \
 	make ${BB_OPT} defconfig || exit 1
 
 	make ${BB_OPT} install || exit 1
