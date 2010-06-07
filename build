@@ -180,6 +180,7 @@ do
 			${MWP_SDL_IMAGE} \
 			${MWP_SDL_TTF} \
 			${MWP_LIBUSB} \
+			${MWP_LIBUSB_COMPAT} \
 			${MWP_MPLAYER} \
 			${MWP_PRBOOM} \
 			${MWP_USB_UTILS} \

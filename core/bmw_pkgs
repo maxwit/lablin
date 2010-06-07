@@ -47,7 +47,8 @@ MWP_MPG123="mpg123-0.66"
 MWP_MADPLAY="madplay-0.15.2b"
 MWP_MPLAYER="MPlayer-1.0rc3"
 MWP_FAAD2="faad2-2.7"
-MWP_LIBUSB="libusb-0.1.12"
+MWP_LIBUSB="libusb-1.0.8"
+MWP_LIBUSB_COMPAT="libusb-compat-0.1.3"
 MWP_USB_UTILS="usbutils-0.86"
 MWP_ZLIB="zlib-1.2.3"
 MWP_FREETYPE="freetype-2.3.12"
@@ -159,7 +160,8 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_MADPLAY}.tar.gz \
 	http://www3.mplayerhq.hu/MPlayer/releases/${MWP_MPLAYER}.tar.bz2 \
 	http://ncu.dl.sourceforge.net/sourceforge/faac/${MWP_FAAD2}.tar.bz2 \
-	http://downloads.sourceforge.net/libusb/${MWP_LIBUSB}.tar.gz \
+	http://ncu.dl.sourceforge.net/project/libusb/libusb-1.0/${MWP_LIBUSB}/${MWP_LIBUSB}.tar.bz2 \
+	http://ncu.dl.sourceforge.net/project/libusb/libusb-compat-0.1/${MWP_LIBUSB_COMPAT}/${MWP_LIBUSB_COMPAT}.tar.bz2 \
 	http://downloads.sourceforge.net/linux-usb/${MWP_USB_UTILS}.tar.gz \
 	ftp://ftp.idsoftware.com/idstuff/doom/${MWP_DOOM_DATA}.gz \
 	http://nchc.dl.sourceforge.net/sourceforge/prboom/${MWP_PRBOOM}.tar.gz \
