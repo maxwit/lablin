@@ -158,11 +158,9 @@ BuildToolchain()
 	cd ${TOOLCHAIN_PATH}/usr/bin
 	for file in `ls ${TARGET_PLAT}-*`; do
 		ln -vs ${file} ${TARGET_ARCH}-linux${file##${TARGET_PLAT}}
-		ln -vs ${file} ${file##${TARGET_PLAT}-}
 	done
 
 	ln -vs ${TARGET_PLAT}-gcc ${TARGET_PLAT}-cc
-	ln -vs ${TARGET_PLAT}-gcc cc
 
 	echo -n "Archive GNU Toolchain ..."
 	cd ${MAXWIT_TOP}
