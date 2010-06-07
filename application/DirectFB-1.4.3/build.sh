@@ -8,6 +8,7 @@
 
 TSLIB_CFLAGS=${ROOTFS_PATH}/usr/include \
 TSLIB_LIBS=${ROOTFS_PATH}/usr/lib \
+ac_cv_path_LIBPNG_CONFIG=${ROOTFS_PATH}/usr/bin/libpng-config \
 ./configure \
 	--prefix=/usr \
 	--build=${BUILD_PLAT} \
