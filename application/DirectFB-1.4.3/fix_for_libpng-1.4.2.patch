@@ -1,0 +1,57 @@
+diff -Nur DirectFB-1.4.3.orig/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c DirectFB-1.4.3/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c
+--- DirectFB-1.4.3.orig/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c	2009-11-23 09:13:05.000000000 -0500
++++ DirectFB-1.4.3/interfaces/IDirectFBImageProvider/idirectfbimageprovider_png.c	2010-06-06 06:31:39.000000000 -0400
+@@ -391,7 +391,6 @@
+                                    direct_memcpy( lock.addr + lock.pitch * y,
+                                                   data->image + data->pitch * y,
+                                                   data->width );
+-
+                               break;
+                          }
+                     }
+@@ -431,7 +430,6 @@
+                                    for (y=0; y<data->height; y++) {
+                                         u8  *S = data->image + data->pitch * y;
+                                         u32 *D = image_argb  + data->width * y * 4;
+-
+                                         for (x=0; x<data->width; x++)
+                                              D[x] = data->palette[ S[x] ];
+                                    }
+@@ -653,7 +651,7 @@
+           if (data->color_type == PNG_COLOR_TYPE_PALETTE) {
+                u32        key;
+                png_colorp palette    = data->info_ptr->palette;
+-               png_bytep  trans      = data->info_ptr->trans;
++               png_bytep  trans      = data->info_ptr->trans_alpha;
+                int        num_colors = MIN( MAXCOLORMAPSIZE,
+                                             data->info_ptr->num_palette );
+                u8         cmap[3][num_colors];
+@@ -678,8 +676,7 @@
+           }
+           else {
+                /* ...or based on trans rgb value */
+-               png_color_16p trans = &data->info_ptr->trans_values;
+-
++               png_color_16p trans = &data->info_ptr->trans_color;
+                data->color_key = (((trans->red & 0xff00) << 8) |
+                                   ((trans->green & 0xff00)) |
+                                   ((trans->blue & 0xff00) >> 8));
+@@ -689,16 +686,14 @@
+      switch (data->color_type) {
+           case PNG_COLOR_TYPE_PALETTE: {
+                png_colorp palette    = data->info_ptr->palette;
+-               png_bytep  trans      = data->info_ptr->trans;
++               png_bytep  trans      = data->info_ptr->trans_alpha;
+                int        num_trans  = data->info_ptr->num_trans;
+-               int        num_colors = MIN( MAXCOLORMAPSIZE, data->info_ptr->num_palette );
+-
++               int        num_colors = MIN(MAXCOLORMAPSIZE, data->info_ptr->num_palette);
+                for (i=0; i<num_colors; i++) {
+                     data->colors[i].a = (i < num_trans) ? trans[i] : 0xff;
+                     data->colors[i].r = palette[i].red;
+                     data->colors[i].g = palette[i].green;
+                     data->colors[i].b = palette[i].blue;
+-
+                     data->palette[i] = PIXEL_ARGB( data->colors[i].a,
+                                                    data->colors[i].r,
+                                                    data->colors[i].g,
