@@ -184,6 +184,7 @@ do
 			${MWP_MPLAYER} \
 			${MWP_PRBOOM} \
 			${MWP_USB_UTILS} \
+			${MWP_WIRELESS_TOOLS} \
 			|| exit 1
 			exit 0
 
