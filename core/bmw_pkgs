@@ -140,7 +140,7 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://nchc.dl.sourceforge.net/sourceforge/giflib/${MWP_LIBUNGIF}.tar.bz2 \
 	http://dl.maptools.org/dl/libtiff/${MWP_TIFF}.tar.gz \
 	http://download.berlios.de/tslib/${MWP_TSLIB}.tar.bz2 \
-	http://www.directfb.org/downloads/Core/${WMP_DFB_DIR}/${MWP_DFB}.tar.gz \
+	http://www.directfb.org/downloads/Core/${MWP_DFB_DIR}/${MWP_DFB}.tar.gz \
 	http://www.directfb.org/downloads/Extras/${MWP_DFB_EX}.tar.gz \
 	ftp://ftp.alsa-project.org/pub/lib/${MWP_ALSA_LIB}.tar.bz2 \
 	http://ftp.gnu.org/pub/gnu/ncurses/${MWP_NCURSES}.tar.gz \
