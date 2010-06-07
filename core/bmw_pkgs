@@ -52,7 +52,7 @@ MWP_USB_UTILS="usbutils-0.86"
 MWP_ZLIB="zlib-1.2.3"
 MWP_FREETYPE="freetype-2.3.7"
 MWP_FONTCONFIG="fontconfig-2.6.0"
-MWP_LIBPNG="libpng-1.2.35"
+MWP_LIBPNG="libpng-1.4.2"
 MWP_JPEG="jpegsrc.v8b"
 MWP_LIBUNGIF="libungif-4.1.4"
 MWP_TIFF="tiff-3.8.2"
@@ -132,7 +132,7 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://www.qtopia.org.cn/ftp/mirror/ftp.trolltech.com/qt/source/${MWP_QTE}.tar.gz \
 	http://www.zlib.net/${MWP_ZLIB}.tar.gz \
 	http://download.savannah.gnu.org/releases/freetype/${MWP_FREETYPE}.tar.bz2 \
-	http://nchc.dl.sourceforge.net/sourceforge/libpng/${MWP_LIBPNG}.tar.bz2 \
+	http://nchc.dl.sourceforge.net/sourceforge/libpng/${MWP_LIBPNG}.tar.gz \
 	http://www.ijg.org/files/${MWP_JPEG}.tar.gz \
 	http://nchc.dl.sourceforge.net/sourceforge/giflib/${MWP_LIBUNGIF}.tar.bz2 \
 	http://dl.maptools.org/dl/libtiff/${MWP_TIFF}.tar.gz \
