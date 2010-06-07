@@ -49,24 +49,12 @@ QemuSetup()
 #	chmod a+x /etc/qemu-ifdown
 }
 
-echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null \
-	|| export PATH=${UTILS_ROOT}/usr/bin:${PATH}
+echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
 export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
-
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
-BuildAll()
+BuildAllApp()
 {
-	# BuildEmulator && \
-
-	BuildUtils && \
-	BuildToolchain || exit 1
-
-	BuildBaseRoot || exit 1
-	# BuildRoot_CoreUtils || exit 1
-
-	BuildKernel || exit 1
-
 	BuildAppList \
 		${MWP_TSLIB} \
 		${MWP_ALSA_UTILS} \
@@ -88,18 +76,22 @@ BuildAll()
 		${MWP_SDL_MIXER} \
 		${MWP_SDL_IMAGE} \
 		${MWP_SDL_TTF} \
-		${MWP_LIBUSB} \
 		${MWP_MPLAYER} \
 		${MWP_PRBOOM} \
+		${MWP_WIRELESS_TOOLS} \
+		${MWP_LIBUSB_COMPAT} \
 		${MWP_USB_UTILS} \
+		${MWP_LIBUSB} \
 		|| exit 1
-		exit 0
+}
 
-		${MWP_OPENSSL} \
-		${MWP_DBUS} \
-		${MWP_LIBXML2} \
-		|| exit 1
-
+BuildAll()
+{
+	BuildUtils && \
+	BuildToolchain && \
+	BuildBaseRoot && \
+	BuildKernel && \
+	BuildAllApp && \
 	RunQemu
 }
 
@@ -123,7 +115,7 @@ do
 			"Create File System Images (yaffs2/jffs2/cramfs,etc.)"
 
 	case $? in
-	0) # fixme
+	0)  # fixme
 		exit 1
 		;;
 
@@ -144,7 +136,6 @@ do
 
 	2)
 		# BuildEmulator && \
-
 		BuildUtils && \
 		BuildToolchain || exit 1
 	    ;;
@@ -155,46 +146,16 @@ do
 		# BuildRoot_CoreUtils || exit 1
 		;;
 
-	4)  BuildAppList \
-			${MWP_TSLIB} \
-			${MWP_ALSA_UTILS} \
-			${MWP_ALSA_LIB} \
-			${MWP_MADPLAY} \
-			${MWP_LIBMAD} \
-			${MWP_LIBID3TAG} \
-			${MWP_MPG123} \
-			${MWP_FAAD2} \
-			${MWP_JPEG} \
-			${MWP_LIBUNGIF} \
-			${MWP_LIBPNG} \
-			${MWP_FBV} \
-			${MWP_TIFF} \
-			${MWP_FREETYPE}  \
-			${MWP_DFB} \
-			${MWP_DFB_EX} \
-			${MWP_SDL} \
-			${MWP_SDL_MIXER} \
-			${MWP_SDL_IMAGE} \
-			${MWP_SDL_TTF} \
-			${MWP_LIBUSB} \
-			${MWP_LIBUSB_COMPAT} \
-			${MWP_MPLAYER} \
-			${MWP_PRBOOM} \
-			${MWP_USB_UTILS} \
-			${MWP_WIRELESS_TOOLS} \
-			|| exit 1
-			exit 0
-
-			${MWP_OPENSSL} \
-			${MWP_DBUS} \
-			${MWP_LIBXML2} \
-			|| exit 1
+	4)
+		BuildAllApp || exit 1
 		;;
 
-	5) RunQemu
+	5)
+		RunQemu
 		;;
 
-	6) BuildImage
+	6)
+		BuildImage
 		;;
 
 	*)
