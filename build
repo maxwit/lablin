@@ -82,6 +82,8 @@ BuildAllApp()
 		${MWP_LIBUSB_COMPAT} \
 		${MWP_USB_UTILS} \
 		${MWP_LIBUSB} \
+		${MWP_MTD_UTILS} \
+		${MWP_E2FS} \
 		|| exit 1
 }
 
