@@ -25,16 +25,17 @@ MWP_TEXINFO="texinfo-4.13"
 
 MWP_GMP="gmp-4.2.4"
 MWP_MPFR="mpfr-2.4.1"
+MWP_MPC="mpc-0.8.2"
 
 # toolchain packags:
-GLIBC_VER="2.9"
-MWP_BINUTILS="binutils-2.19.1"
-MWP_GCC="gcc-4.4.0"
+MWP_BINUTILS="binutils-2.20.1"
+MWP_GCC="gcc-4.5.0"
+GLIBC_VER="2.11"
 MWP_GLIBC="glibc-${GLIBC_VER}"
 MWP_GLIBC_PORTS="glibc-ports-${GLIBC_VER}"
 
 
-# MaxWit Lablin packages:
+# Lablin packages:
 MWP_BASH="bash-4.0"
 MWP_COREUTILS="coreutils-7.2"
 MWP_DEBIANUTILS="debianutils_2.30"
@@ -94,10 +95,8 @@ MWP_OPENSSL="openssl-0.9.8j"
 MWP_DBUS="dbus-1.2.1"
 MWP_MODULE_INIT="module-init-tools-3.9"
 
-
 # sbox2 packages
 SBP_LIBTOOL="libtool-1.5.26"
-
 
 # utils packages:
 MWP_PATCH="patch-2.5.9"

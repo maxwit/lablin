@@ -33,7 +33,7 @@ BUILD_JOBS="-j1"
 mkdir -vp ${APP_BUILD_PATH}
 mkdir -vp ${UTILS_BUILD_PATH}
 
-QemuSetup()
+qemu_setup()
 {
 	sudo touch /etc/qemu-ifup && \
 	sudo chmod 777 /etc/qemu-ifup && \
@@ -53,7 +53,7 @@ echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr
 export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
-BuildAllApp()
+build_all_app()
 {
 	BuildAppList \
 		${MWP_TSLIB} \
@@ -89,18 +89,16 @@ BuildAllApp()
 
 BuildAll()
 {
-	BuildUtils && \
-	BuildToolchain && \
-	BuildBaseRoot && \
-	BuildKernel && \
-	BuildAllApp && \
-	RunQemu
+	build_utils && \
+	build_toolchain && \
+	build_base_root && \
+	build_linux_kernel && \
+	build_all_app && \
+	run_qemu
 }
 
-# fixme!
-PROG_NAME=`basename $0`
 
-if [ "${PROG_NAME}" == "build-all" ]; then
+if [ "${1}" == "all" ]; then
 	BuildAll
 	exit 0
 fi
@@ -114,7 +112,7 @@ do
 			"Build Basic System (${MWP_KERNEL} & busybox)" \
 			"Build Applications (Lib/App/Games)" \
 			"Testing on QEMU" \
-			"Create File System Images (yaffs2/jffs2/cramfs,etc.)"
+			"Create File System Images (UBI/YAFFS2/JFFS2,etc.)"
 
 	case $? in
 	0)  # fixme
@@ -133,31 +131,31 @@ do
 			sudo exportfs
 		}
 
-		QemuSetup
+		qemu_setup
 		;;
 
 	2)
 		# BuildEmulator && \
-		BuildUtils && \
-		BuildToolchain || exit 1
+		build_utils && \
+		build_toolchain || exit 1
 	    ;;
 
 	3)
-		BuildBaseRoot || exit 1
-		BuildKernel || exit 1
+		build_base_root || exit 1
+		build_linux_kernel || exit 1
 		# BuildRoot_CoreUtils || exit 1
 		;;
 
 	4)
-		BuildAllApp || exit 1
+		build_all_app || exit 1
 		;;
 
 	5)
-		RunQemu
+		run_qemu
 		;;
 
 	6)
-		BuildImage
+		create_image
 		;;
 
 	*)

@@ -13,14 +13,14 @@
 # check source package list
 
 
-CreatBuildDir()
+create_build_directory()
 {
 	rm -rf ${TOOLCHAIN_BUILD_PATH}/${1}
 	mkdir -vp ${TOOLCHAIN_BUILD_PATH}/${1} && \
 	cd ${TOOLCHAIN_BUILD_PATH}/${1} || exit 1
 }
 
-BuildToolchain()
+build_toolchain()
 {
 	mkdir -p ${KERNEL_BUILD_PATH}
 	mkdir -p ${TOOLCHAIN_BUILD_PATH}
@@ -31,7 +31,7 @@ BuildToolchain()
 		${MWP_GLIBC} \
 		"
 
-	CheckPkg "${MWP_KERNEL} ${TOOLCHAIN_PKG_LIST}"
+	check_pkgs "${MWP_KERNEL} ${TOOLCHAIN_PKG_LIST}"
 
 	Unpack ${MWP_KERNEL} kernel # fixme
 
@@ -40,9 +40,8 @@ BuildToolchain()
 		Unpack ${pkg} toolchain || exit 1
 	done
 
-	sed -i 's,\(const char pkgversion_string.*=\).*;,\1 "from http://www.maxwit.com ";,' \
-		${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/gcc/version.c
-
+	# sed -i 's,\(const char pkgversion_string.*=\).*;,\1 "from http://www.maxwit.com ";,' \
+	# 	${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/gcc/version.c
 
 	cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
 	KERN_OPT="ARCH=${TARGET_ARCH} INSTALL_HDR_PATH=${ROOTFS_PATH}/usr"
@@ -54,7 +53,7 @@ BuildToolchain()
 	make ${KERN_OPT} headers_install || exit 1
 
 
-	CreatBuildDir binutils-build
+	create_build_directory binutils-build
 
 	${TOOLCHAIN_BUILD_PATH}/${MWP_BINUTILS}/configure \
 		--prefix=/usr \
@@ -76,7 +75,7 @@ BuildToolchain()
 	cp -v ../${MWP_BINUTILS}/include/libiberty.h ${ROOTFS_PATH}/usr/include
 
 
-	CreatBuildDir gcc-build-1
+	create_build_directory gcc-build-1
 
 	${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/configure \
 		--prefix=/usr \
@@ -104,7 +103,7 @@ BuildToolchain()
 	make && make DESTDIR=${TOOLCHAIN_PATH} install || exit 1
 
 
-	CreatBuildDir glibc-build
+	create_build_directory glibc-build
 
 	echo "install_root=${ROOTFS_PATH}" > configparms
 	libc_cv_forced_unwind=yes \
@@ -130,7 +129,7 @@ BuildToolchain()
 	make && make install || exit 1
 
 
-	CreatBuildDir gcc-build-2
+	create_build_directory gcc-build-2
 
 	${TOOLCHAIN_BUILD_PATH}/${MWP_GCC}/configure \
 		--prefix=/usr \
@@ -140,6 +139,7 @@ BuildToolchain()
 		--with-sysroot=${ROOTFS_PATH} \
 		--with-gmp=${UTILS_ROOT}/usr \
 		--with-mpfr=${UTILS_ROOT}/usr \
+		--with-pkgversion="MaxWit Training, http://www.maxwit.com" \
 		--disable-multilib \
 		--disable-nls \
 		--enable-shared \

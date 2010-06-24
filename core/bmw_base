@@ -50,27 +50,40 @@ fi
 
 # fixme: prompt
 TARGET_SOC="AT91SAM9263"
-TARGET_SOC=`echo ${TARGET_SOC} | tr A-Z a-z`
 
 case "${TARGET_SOC}" in
-	s3c2410 | s3c2440)
+	S3C2410 | S3C2440)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
 		BU_CPU_OPT="--with-float=soft"
 		GCC_CPU_OPT="--with-float=soft --with-arch=armv4t --with-tune=arm920t"
 		;;
 
-	s3c6400 | s3c6410)
+	S3C6400 | S3C6410)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
-		GCC_CPU_OPT="--with-arch=armv6"
+		GCC_CPU_OPT="--with-arch=armv6zk --with-tune=arm1176jzf-s"
 		;;
 
-	at91sam9261 | at91sam9263 | pxa168)
+	AT91SAM9261 | AT91SAM9263)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
 		BU_CPU_OPT="--with-float=soft"
 		GCC_CPU_OPT="--with-float=soft --with-arch=armv5te --with-tune=arm926ej-s"
+		;;
+
+	# fixme
+	PXA168 | PXA910)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		BU_CPU_OPT="--with-float=soft"
+		GCC_CPU_OPT="--with-float=soft --with-arch=armv5te --with-tune=arm926ej-s"
+		;;
+
+	OMAP3430 | OMAP3530)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		GCC_CPU_OPT="--with-arch=armv7-a --with-tune=cortex-a8"
 		;;
 
 	malta)
@@ -181,7 +194,7 @@ Unpack()
 
 
 # Downlaod packages
-DownLoadPkg()
+download_pkg()
 {
 	local pkg_link_list
 	local pkg_link
@@ -201,19 +214,13 @@ DownLoadPkg()
 			if [ -n "`echo ${pkg_link} | grep ${1}`" ];then
 				pkg_name=`basename ${pkg_link}`
 				if [ ! -f "${pkg_name}" ]; then
-					echo
-					echo
-					echo "/**************************************************/"
-					echo "    Downloading package of ${1}"
-					echo "/**************************************************/"
-					echo
 					${DL_CMD} ${pkg_link} -O ${pkg_name}
 				fi
 			fi
 		done
+
 		shift
 	done
-
 }
 
 
@@ -249,7 +256,7 @@ PrintPkgLink()
 }
 
 # one and only one argument is accepted!!
-CheckPkg()
+check_pkgs()
 {
 	local lost_list=""
 	local pkg=""
@@ -257,8 +264,12 @@ CheckPkg()
 
 	for pkg in $1
 	do
-		ls ${SRC_PATH}/${pkg}.* > /dev/null 2>&1 || \
-		ls ${SRC_PATH}/${pkg}[ab].* > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}.tar.gz > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}.tar.bz2 > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}.tgz > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}[ab].tar.gz > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}[ab].tar.bz2 > /dev/null 2>&1 || \
+		ls ${SRC_PATH}/${pkg}[ab].tgz > /dev/null 2>&1 || \
 		{
 			if [ -z "${lost_list}" ]; then
 				lost_list="${pkg}"
@@ -273,25 +284,24 @@ CheckPkg()
 	echo
 	echo
 	echo "Following packages cound NOT be found in \"${SRC_PATH}\":"
-	echo
 	for pkg in ${lost_list}
 	do
 		echo "    $pkg"
 	done
 
 	echo
+	download_pkg "${PLINK_LIST}" ${lost_list}
 
-	echo -n "Download them now? (y/n) "
-	read dl
-	
-	if [ "${dl}" = "y" -o "${dl}" = "Y" -o "${dl}" = "dl" -o "${dl}" = "Yes" ]; then
-		DownLoadPkg "${PLINK_LIST}" ${lost_list}
-	else
-		PrintPkgLink "${PLINK_LIST}" ${lost_list}	
-		exit 1
-	fi
-
-#	exit 1
+	# echo
+	# echo -n "Download them now? (y/n) "
+	# read dl
+	# 
+	# if [ "${dl}" = "y" -o "${dl}" = "Y" -o "${dl}" = "dl" -o "${dl}" = "Yes" ]; then
+	# 	download_pkg "${PLINK_LIST}" ${lost_list}
+	# else
+	# 	PrintPkgLink "${PLINK_LIST}" ${lost_list}	
+	# 	exit 1
+	# fi
 }
 
 

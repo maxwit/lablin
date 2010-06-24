@@ -46,7 +46,7 @@ BuildAppPkg()
 		done
 	fi	
 
-	CheckPkg ${1}
+	check_pkgs ${1}
 
 	Unpack ${1} application
 
@@ -88,7 +88,7 @@ BuildAppList()
 }
 
 
-BuildBaseRoot()
+build_base_root()
 {
 	local dir
 
@@ -187,7 +187,7 @@ BuildRoot_CoreUtils()
 }
 
 
-RunQemu()
+run_qemu()
 {
 	QEMU_CONSOLE=0
 	QEMU_MACH="realview"
@@ -201,7 +201,7 @@ RunQemu()
 }
 
 
-BuildImage()
+create_image()
 {
 	local IMAGE_PREFIX=rootfs
 	local IMG_RFS_PATH=${MAXWIT_TOP}/rootfs_final

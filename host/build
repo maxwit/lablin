@@ -40,7 +40,7 @@ BuildHostPkg()
 		done
 	fi	
 
-	CheckPkg ${1}
+	check_pkgs ${1}
 
 	Unpack ${1} host
 
@@ -54,7 +54,7 @@ BuildHostPkg()
 }
 
 
-BuildUtils()
+build_utils()
 {
 	mkdir -vp ${UTILS_ROOT}/usr/bin
 	mkdir -vp ${UTILS_ROOT}/usr/lib
@@ -72,6 +72,7 @@ BuildUtils()
 		${MWP_TEXINFO} \
 		${MWP_GMP} \
 		${MWP_MPFR} \
+		${MWP_MPC} \
 		${MWP_AUTOCONF} \
 		${MWP_AUTOMAKE} \
 		;

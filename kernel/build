@@ -15,7 +15,7 @@
 KERNEL_TOP="${MW_TOP_DIR}/kernel"
 
 
-BuildKernel()
+build_linux_kernel()
 {
 	KERN_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- INSTALL_MOD_PATH=${ROOTFS_PATH}"
 

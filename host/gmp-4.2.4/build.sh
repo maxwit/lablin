@@ -3,7 +3,7 @@
 
 ./configure \
 	--prefix=/usr \
-	--disable-shared \
+	--enable-shared \
 	--enable-static \
 	|| exit 1
 
