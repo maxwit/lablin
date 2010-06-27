@@ -10,27 +10,21 @@
 
 
 SRC_PATH=/work/source
-TFTP_PATH=/var/lib/tftpboot
 
 MAXWIT_TOP=${HOME}/maxwit
-ROOTFS_PATH=${MAXWIT_TOP}/sysroot
+ROOTFS_PATH=${MAXWIT_TOP}/rootfs
 TOOLCHAIN_PATH=${MAXWIT_TOP}/toolchain
-# TOOLCHAIN_PATH=${MAXWIT_TOP}/sysroot
 BUILD_PATH=${MAXWIT_TOP}/build
 IMAGES_PATH=${MAXWIT_TOP}/images
 
 # host utils
 UTILS_ROOT=${MAXWIT_TOP}/utils
-MWEMU_ROOT=${MAXWIT_TOP}/mwemu
 
 # sub dirs in $BUILD_PATH
 UTILS_BUILD_PATH=${BUILD_PATH}/host
 TOOLCHAIN_BUILD_PATH=${BUILD_PATH}/toolchain
-KERNEL_BUILD_PATH=${BUILD_PATH}/kernel
-APP_BUILD_PATH=${BUILD_PATH}/application
-
-QEMU_HOST_IP="10.0.0.1"
-QEMU_MACH_IP="10.0.0.2"
+KERNEL_BUILD_PATH=${BUILD_PATH}/target
+APP_BUILD_PATH=${BUILD_PATH}/target
 
 # fixme
 mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
@@ -109,16 +103,12 @@ case "${TARGET_SOC}" in
 esac
 
 export ROOTFS_PATH TOOLCHAIN_PATH BUILD_PLAT TARGET_PLAT
+# fixme
+export UTILS_ROOT GCC_CPU_OPT
 
-[ -z "${GLIBC_BUILDING_GCC}" ] && GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc"
+[ -z "${GLIBC_BUILDING_GCC}" ] && export GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc" # fixme
 [ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}
 
-# grep "${MWEMU_ROOT}" ~/.bashrc > /dev/null \
-# 	|| echo "export PATH=${MWEMU_ROOT}/usr/bin:\${PATH}" >> ~/.bashrc
-#
-# echo ${PATH} | grep "${MWEMU_ROOT}" > /dev/null \
-# 	|| export PATH=${MWEMU_ROOT}/usr/bin:${PATH}
-#
 grep "${TOOLCHAIN_PATH}" ~/.bashrc > /dev/null \
 	|| echo "export PATH=\${PATH}:${TOOLCHAIN_PATH}/usr/bin" >> ~/.bashrc
 
@@ -126,46 +116,69 @@ echo ${PATH} | grep "${TOOLCHAIN_PATH}" > /dev/null \
 	|| export PATH=${PATH}:${TOOLCHAIN_PATH}/usr/bin
 
 
-# mkdir -vp ${ROOTFS_PATH} ${TOOLCHAIN_PATH} ${IMAGES_PATH} 
+# mkdir -vp ${ROOTFS_PATH} ${TOOLCHAIN_PATH}
+mkdir -vp ${IMAGES_PATH}
 
-# $1: pkg name
+
+# $1: package name
 # $2: category
-Unpack()
+unpack_to()
 {
 	local pkg="${1}"
+	local cat="${2}"
 	local upkg=""
 
-	cd ${BUILD_PATH}/${2}
+	mkdir -p ${BUILD_PATH}/${cat} && \
+	cd ${BUILD_PATH}/${cat}
+
+	case "${pkg}" in
+	binutils-* | gcc-* | glibc-*)
+		upkg=${pkg}-build
+		# rm -rf ${upkg}
+		mkdir -p ${upkg}
+		;;
+
+	*)
+		upkg="${pkg}"
+		;;
+	esac
+
+	# fixme
+	if [ -d ${pkg} ]; then
+		echo "package \"${pkg}\" exists, skipped"
+		cd ${upkg}
+		echo
+		return 0
+	fi
 
 	echo -n "Extracting \"${pkg}\" ."
 
-#	if test -d ${pkg}
-#	then
-#		echo "pkg ${pkg} is exists skiping ..."
-#		cd ${pkg} || exit 1
-#		return 0
-#	fi
-
-	if [ -z "${2}" ]; then
+	if [ -z "${pkg}" ]; then
 		echo "target dir NOT specified!"
 		exit 1
 	fi
 
 	echo -n "."
 
-	rm .__temp__ -rf && mkdir .__temp__ || exit 1
+	mkdir -p __temp__
 
 	if test -f ${SRC_PATH}/${pkg}.tar.bz2; then
-		tar jxf ${SRC_PATH}/${pkg}.tar.bz2 -C .__temp__ || exit 1
+		tar jxf ${SRC_PATH}/${pkg}.tar.bz2 -C __temp__ || exit 1
 	elif test -f ${SRC_PATH}/${pkg}.tar.gz; then
-		tar zxf ${SRC_PATH}/${pkg}.tar.gz -C .__temp__ || exit 1
+		tar zxf ${SRC_PATH}/${pkg}.tar.gz -C __temp__ || exit 1
+	elif test -f ${SRC_PATH}/${pkg}.tar.xz; then
+		tar Jxf ${SRC_PATH}/${pkg}.tar.xz -C __temp__ || exit 1
 	else
-		tar xf ${SRC_PATH}/${pkg}* -C .__temp__ || exit 1
+		tar xf ${SRC_PATH}/${pkg}* -C __temp__ || exit 1
 	fi
 
 	echo -n "."
 
-	rm ${pkg} -rf && mv .__temp__/* ${pkg} || exit 1
+	# care about symbolic link?
+	rm -rf ${pkg} && \
+	mv __temp__/* ${pkg} && \
+	rm -rf __temp__ \
+	|| exit 1
 
 	echo -n "."
 
@@ -185,11 +198,15 @@ Unpack()
 
 	which patch > /dev/null 2>&1 && \
 	{
-		for fpatch in `ls ${MW_TOP_DIR}/${2}/${pkg}/*.patch 2>/dev/null`
+		for fpatch in `ls ${MW_TOP_DIR}/${cat}/${pkg}/*.patch 2>/dev/null`
 		do
 			patch -p1 -i ${fpatch} || exit 1
 		done
 	}
+
+	if [ "${pkg}" != "${upkg}" ]; then
+		cd ../${upkg}
+	fi
 }
 
 
@@ -224,7 +241,7 @@ download_pkg()
 }
 
 
-PrintPkgLink()
+print_link()
 {
 	local pkg_link_list
 	local pkg_link
@@ -279,7 +296,7 @@ check_pkgs()
 		}
 	done
 
-	[ -z "${lost_list}" ] && return
+	[ -z "${lost_list}" ] && return 0
 
 	echo
 	echo
@@ -299,22 +316,65 @@ check_pkgs()
 	# if [ "${dl}" = "y" -o "${dl}" = "Y" -o "${dl}" = "dl" -o "${dl}" = "Yes" ]; then
 	# 	download_pkg "${PLINK_LIST}" ${lost_list}
 	# else
-	# 	PrintPkgLink "${PLINK_LIST}" ${lost_list}	
+	# 	print_link "${PLINK_LIST}" ${lost_list}	
 	# 	exit 1
 	# fi
 }
 
 
-CheckMap()
+# fixme for loop dependency
+# $1 = package
+# $2 = category 
+build_package()
 {
-	MM_FILE="/proc/sys/vm/mmap_min_addr"
-	MM_MIN_ADDR=`cat ${MM_FILE}` || exit 1
-	if [ "${MM_MIN_ADDR}" != "0" ]; then
-		if [ ${USER} = root ]; then
-			echo 0 > ${MM_FILE} || exit 1
-		else
-			echo "Pls run \"echo 0 > ${MM_FILE}\" as root!"
-			exit 1
-		fi
+	local df=""
+	local pkg=${1}
+	local cat=${2}
+	local subdir="${MW_TOP_DIR}/${cat}/${pkg}"
+	local srcdir="${BUILD_PATH}/${cat}/${pkg}"
+	local built_flag=".__lablin_built"
+
+	if [ -f "${srcdir}/${built_flag}" ]; then
+		echo "\"${1}\" has been built."
+		echo
+		return 0
 	fi
+
+	if [ -f ${subdir}/dep ]; then
+		for df in `cat ${subdir}/dep`
+		do
+			build_package ${df} ${cat} || return 1
+		done
+	fi
+
+	check_pkgs ${pkg}
+
+	unpack_to ${pkg} ${cat}
+
+	echo "Building \"${pkg}\" ..."
+
+	# fixme
+	if test -x ${subdir}/build.sh; then
+		${subdir}/build.sh || exit 1
+	else
+		./configure \
+			--prefix=/usr \
+			--host=${TARGET_PLAT} \
+			--build=${BUILD_PLAT} \
+			|| exit 1
+
+		make && \
+		make DESTDIR=${ROOTFS_PATH} install || exit 1
+	fi
+
+	if test -x ${subdir}/setup.sh; then
+		cd ${subdir} && \
+		. ./setup.sh || exit 1
+	fi
+
+	touch ${srcdir}/${built_flag}
+	echo
+
+	return 0
 }
+

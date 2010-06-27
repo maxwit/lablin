@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ShowMenu()
+show_menu()
 {
 	local i=1
 	local count
@@ -27,9 +27,9 @@ ShowMenu()
 	echo -n "Your choice[1-${count}]? "
 	read choice
 
-	if [ -z `echo "${choice}"|sed -n '/[[:digit:]]/!p'` ];then
+	if [ -z `echo "${choice}" | sed -n '/[[:digit:]]/!p'` ];then
 		return ${choice}
-	elif [ "${choice}" = "x" -o "${choice}" = "X"  -o "${choice}" = "q"  -o "${choice}" = "Q" ]; then
+	elif [ "${choice}" = "x" -o "${choice}" = "X"  -o "${choice}" = "q" -o "${choice}" = "Q" ]; then
 		return 0
 	else
 		return -1

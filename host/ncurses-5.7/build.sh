@@ -12,4 +12,4 @@ CFLAGS="-fPIC" \
 	|| exit 1
 
 make && \
-make DESTDIR=${1} install || exit 1
+make DESTDIR=${UTILS_ROOT} install || exit 1

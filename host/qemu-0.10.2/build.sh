@@ -8,8 +8,8 @@
 	|| exit 1
 
 make && \
-make DESTDIR=${1} install || exit 1
+make DESTDIR=${UTILS_ROOT} install || exit 1
 
 #	--disable-sdl \
 #	--disable-gfx-check \
-#	--cc="gcc -I${1}/usr/include -L${1}/usr/lib" \
+#	--cc="gcc -I${UTILS_ROOT}/usr/include -L${UTILS_ROOT}/usr/lib" \

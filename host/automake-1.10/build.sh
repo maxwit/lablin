@@ -2,7 +2,7 @@
 #
 
 ./configure \
-	--prefix=${1}/usr \
+	--prefix=${UTILS_ROOT}/usr \
 	|| exit 1
 
 make && \

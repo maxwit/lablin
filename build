@@ -23,90 +23,38 @@ MW_TOP_DIR=${PWD}
 
 . host/build
 . toolchain/build
-. kernel/build
-. application/build
+. target/build
 
 
 BUILD_JOBS="-j1"
 
 
-mkdir -vp ${APP_BUILD_PATH}
-mkdir -vp ${UTILS_BUILD_PATH}
-
-qemu_setup()
-{
-	sudo touch /etc/qemu-ifup && \
-	sudo chmod 777 /etc/qemu-ifup && \
-	sudo touch /etc/qemu-ifdown && \
-	sudo chmod 777 /etc/qemu-ifdown
-
-	echo '#!/bin/sh' > /etc/qemu-ifup
-	echo "/sbin/ifconfig \$1 ${QEMU_HOST_IP}" >> /etc/qemu-ifup
-#	chmod a+x /etc/qemu-ifup
-
-	echo '#!/bin/sh' > /etc/qemu-ifdown
-	echo "/sbin/ifconfig \$1 down" >> /etc/qemu-ifdown
-#	chmod a+x /etc/qemu-ifdown
-}
-
 echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
 export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
-build_all_app()
-{
-	BuildAppList \
-		${MWP_TSLIB} \
-		${MWP_ALSA_UTILS} \
-		${MWP_ALSA_LIB} \
-		${MWP_MADPLAY} \
-		${MWP_LIBMAD} \
-		${MWP_LIBID3TAG} \
-		${MWP_MPG123} \
-		${MWP_FAAD2} \
-		${MWP_JPEG} \
-		${MWP_LIBUNGIF} \
-		${MWP_LIBPNG} \
-		${MWP_FBV} \
-		${MWP_TIFF} \
-		${MWP_FREETYPE}  \
-		${MWP_DFB} \
-		${MWP_DFB_EX} \
-		${MWP_SDL} \
-		${MWP_SDL_MIXER} \
-		${MWP_SDL_IMAGE} \
-		${MWP_SDL_TTF} \
-		${MWP_MPLAYER} \
-		${MWP_PRBOOM} \
-		${MWP_WIRELESS_TOOLS} \
-		${MWP_LIBUSB_COMPAT} \
-		${MWP_USB_UTILS} \
-		${MWP_LIBUSB} \
-		${MWP_MTD_UTILS} \
-		${MWP_E2FS} \
-		|| exit 1
-}
 
-BuildAll()
-{
+if [ "${1}" == "all" ]; then
+	for dir in `ls ${MAXWIT_TOP}`
+	do
+		echo "Removing ${MAXWIT_TOP}/${dir}"
+		rm -rf ${MAXWIT_TOP}/${dir}
+	done
+ 
 	build_utils && \
 	build_toolchain && \
-	build_base_root && \
+	build_basic_rootfs && \
 	build_linux_kernel && \
 	build_all_app && \
 	run_qemu
-}
 
-
-if [ "${1}" == "all" ]; then
-	BuildAll
 	exit 0
 fi
 
 
 while true
 do
-	ShowMenu "[MaxWit Lablin Building Menu] (configured for ${TARGET_SOC})" \
+	show_menu "[MaxWit Lablin Building Menu] (for ${TARGET_SOC})" \
 			"Host Check & Setup (sudo)" \
 			"Build GNU Toolchain and Emulator" \
 			"Build Basic System (${MWP_KERNEL} & busybox)" \
@@ -115,14 +63,7 @@ do
 			"Create File System Images (UBI/YAFFS2/JFFS2,etc.)"
 
 	case $? in
-	0)  # fixme
-		exit 1
-		;;
-
 	1)
-		sudo mkdir -vp ${TFTP_PATH} && \
-		sudo chmod 777 ${TFTP_PATH}
-
 		grep "${MAXWIT_TOP}" /etc/exports > /dev/null 2>&1 || \
 		{
 			sudo chmod 666 /etc/exports
@@ -135,15 +76,15 @@ do
 		;;
 
 	2)
-		# BuildEmulator && \
+		# build_emulator && \
 		build_utils && \
 		build_toolchain || exit 1
 	    ;;
 
 	3)
-		build_base_root || exit 1
+		build_basic_rootfs || exit 1
 		build_linux_kernel || exit 1
-		# BuildRoot_CoreUtils || exit 1
+		# build_root_std || exit 1
 		;;
 
 	4)

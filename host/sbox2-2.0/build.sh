@@ -2,4 +2,4 @@
 #
 
 ./autogen.sh && \
-make install prefix=${1}/usr || exit 1
+make install prefix=${UTILS_ROOT}/usr || exit 1

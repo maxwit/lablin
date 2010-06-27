@@ -1,14 +1,14 @@
 #!/bin/sh
 #
 
-# LDFLAGS="-Wl,-rpath,${1}/usr/lib" \
+# LDFLAGS="-Wl,-rpath,${UTILS_ROOT}/usr/lib" \
 ./configure \
 	--prefix=/usr \
 	--enable-shared \
 	--enable-static \
-	--with-gmp=${1}/usr \
-	--with-mpfr=${1}/usr \
+	--with-gmp=${UTILS_ROOT}/usr \
+	--with-mpfr=${UTILS_ROOT}/usr \
 	|| exit 1
 
 make && \
-make DESTDIR=${1} install || exit 1
+make DESTDIR=${UTILS_ROOT} install || exit 1

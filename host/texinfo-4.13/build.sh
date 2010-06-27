@@ -1,11 +1,11 @@
 #!/bin/sh
 #
 
-# LDFLAGS="-L${1}/usr/lib" \
+# LDFLAGS="-L${UTILS_ROOT}/usr/lib" \
 
 ./configure \
 	--prefix=/usr \
 	|| exit 1
 
 make && \
-make DESTDIR=${1} install || exit 1
+make DESTDIR=${UTILS_ROOT} install || exit 1

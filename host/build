@@ -10,48 +10,10 @@
 #
 
 
-UTILS_TOP="${MW_TOP_DIR}/host"
-BUILT_TAG=".maxwit_built"
+# UTILS_TOP="${MW_TOP_DIR}/host"
 
-# fixme for loop
-BuildHostPkg()
-{
-	local df=""
-	local subdir="${UTILS_TOP}/${1}"
-	local srcdir="${UTILS_BUILD_PATH}/${1}"
-
-	if [ -d "${subdir}" ]; then
-		cd "${subdir}" 
-	else
-		echo "\"${subdir}\" does NOT exist!"
-		return 1
-	fi
-
-	if [ -e "${srcdir}/${BUILT_TAG}" ]; then
-		echo "\"${1}\" has been built."
-		echo
-		return 0
-	fi
-
-	if [ -f dep ]; then
-		for df in `cat dep`
-		do
-			BuildHostPkg ${df}
-		done
-	fi	
-
-	check_pkgs ${1}
-
-	Unpack ${1} host
-
-	cd ${srcdir}
-
-	${subdir}/build.sh ${2} && \
-	touch ${srcdir}/${BUILT_TAG} || exit 1
-	echo
-
-	return 0
-}
+QEMU_HOST_IP="10.0.0.1"
+QEMU_MACH_IP="10.0.0.2"
 
 
 build_utils()
@@ -77,7 +39,7 @@ build_utils()
 		${MWP_AUTOMAKE} \
 		;
 	do
-		BuildHostPkg ${pkg} ${UTILS_ROOT}
+		build_package ${pkg} host
 	done
 
 #	sed -i "s:\(.*my.*ENV.*\)libtoolize:\1${UTILS_ROOT}/bin/libtoolize:" ${UTILS_PREFIX}/bin/autoreconf || exit 1
@@ -86,15 +48,19 @@ build_utils()
 }
 
 
-BuildEmulator()
+qemu_setup()
 {
-	mkdir -vp ${MWEMU_ROOT}/usr/bin
-	mkdir -vp ${MWEMU_ROOT}/usr/lib
-	mkdir -vp ${MWEMU_ROOT}/usr/share/man/man1
+	sudo touch /etc/qemu-ifup && \
+	sudo chmod 777 /etc/qemu-ifup && \
+	sudo touch /etc/qemu-ifdown && \
+	sudo chmod 777 /etc/qemu-ifdown
 
-	for pkg in ${MWP_QEMU} ${MWP_SBOX2}
-	do
-		BuildHostPkg ${pkg} ${MWEMU_ROOT}
-	done
+	echo '#!/bin/sh' > /etc/qemu-ifup
+	echo "/sbin/ifconfig \$1 ${QEMU_HOST_IP}" >> /etc/qemu-ifup
+#	chmod a+x /etc/qemu-ifup
+
+	echo '#!/bin/sh' > /etc/qemu-ifdown
+	echo "/sbin/ifconfig \$1 down" >> /etc/qemu-ifdown
+#	chmod a+x /etc/qemu-ifdown
 }
 

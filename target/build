@@ -12,83 +12,7 @@
 #
 
 
-APP_TOP="${MW_TOP_DIR}/application"
-
-BUILT_TAG=".maxwit_built"
-
-BUILD_TOOLS_LIST="${MWP_ZLIB} ${MWP_PKG_CONFIG}"
-# BUILD_TOOLS_LIST="${MWP_ZLIB} ${MWP_PKG_CONFIG} ${MWP_AUTOCONF} ${MWP_AUTOMAKE} ${MWP_PYTHON}"
-
-# fixme for loop dependency
-BuildAppPkg() 
-{
-	local df=""
-	local subdir="${APP_TOP}/${1}"
-	local srcdir="${APP_BUILD_PATH}/${1}"
-
-#	if [ -d "${subdir}" ]; then
-#		cd "${subdir}"
-#	else
-#		echo "\"${subdir}\" does NOT exist!"
-#		return 1
-#	fi
-
-	if [ -e "${srcdir}/${BUILT_TAG}" ]; then
-		echo "\"${1}\" has been built."
-		echo
-		return 0
-	fi
-
-	if [ -f ${subdir}/dep ]; then
-		for df in `cat ${subdir}/dep`
-		do
-			BuildAppPkg ${df} || return 1
-		done
-	fi	
-
-	check_pkgs ${1}
-
-	Unpack ${1} application
-
-	# fixme
-	if test -x  ${subdir}/build.sh; then
-		${subdir}/build.sh || exit 1
-	else
-		./configure \
-			--prefix=/usr \
-			--host=${TARGET_PLAT} \
-			--build=${BUILD_PLAT} \
-			|| exit 1
-
-		make && \
-		make DESTDIR=${ROOTFS_PATH} install || exit 1
-		# make DESTDIR=${ROOTFS_PATH} install || exit 1
-	fi
-
-	if test -x  ${subdir}/setup.sh; then
-		cd ${subdir} && \
-		. ./setup.sh || exit 1
-	fi
-
-	touch ${srcdir}/${BUILT_TAG}
-	echo
-
-	return 0
-}
-
-
-BuildAppList()
-{
-	local pkg=""
-
-	for pkg in $*
-	do
-		BuildAppPkg ${pkg} || exit 1
-	done
-}
-
-
-build_base_root()
+build_basic_rootfs()
 {
 	local dir
 
@@ -96,8 +20,10 @@ build_base_root()
 
 	for dir in `ls ${APP_BUILD_PATH}`
 	do
-		rm -rf ${APP_BUILD_PATH}/${dir}
-		echo -n "."
+		if [ $dir != ${MWP_KERNEL} ]; then
+			rm -rf ${APP_BUILD_PATH}/${dir}
+			echo -n "."
+		fi
 	done
 
 	# rm -rf ${ROOTFS_PATH}
@@ -112,6 +38,7 @@ build_base_root()
 		mkdir -p usr/share/man/man${i}
 	done
 
+	# fixme
 	cp -a ${TOOLCHAIN_PATH}/usr/${TARGET_PLAT}/lib/*.so* lib/
 	echo -n "."
 
@@ -153,37 +80,38 @@ EOF
 
 	local BB_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- CONFIG_PREFIX=${ROOTFS_PATH}"
 
-	Unpack ${MWP_BUSYBOX} application || exit 1
+	unpack_to ${MWP_BUSYBOX} target || exit 1
 
-	cp ${APP_TOP}/${MWP_BUSYBOX}/defconfig ${APP_BUILD_PATH}/${MWP_BUSYBOX}/scripts/ && \
+	cp ${MW_TOP_DIR}/target/${MWP_BUSYBOX}/defconfig ${APP_BUILD_PATH}/${MWP_BUSYBOX}/scripts/ && \
 	make ${BB_OPT} defconfig || exit 1
 
 	make ${BB_OPT} install || exit 1
 
-	BuildAppPkg ${MWP_UDEV}
+	build_package ${MWP_UDEV} target
 }
 
 
-BuildRoot_CoreUtils()
+build_root_std()
 {
-	# fixme
-	local pkg_list="\
-				${MWP_SED} \
-				${MWP_GAWK} \
-				${BUILD_TOOLS_LIST} \
-				${MWP_COREUTILS} \
-				${MWP_E2FS_LIBS} \
-				${MWP_E2FS} \
-				${MWP_UTIL_LINUX} \
-				${MWP_SYSVINIT} \
-				${MWP_COREUTILS} \
-				${MWP_DEBUTILS} \
-				${MWP_UTIL_LINUX} \
-				${MWP_MODULE_INIT} \
-				${MWP_UDEV} \
-				"
-
-	BuildAppList ${pkg_list}
+	for pkg in \
+		${MWP_SED} \
+		${MWP_GAWK} \
+		${MWP_ZLIB} \
+		${MWP_PKG_CONFIG} \
+		${MWP_COREUTILS} \
+		${MWP_E2FS_LIBS} \
+		${MWP_E2FS} \
+		${MWP_UTIL_LINUX} \
+		${MWP_SYSVINIT} \
+		${MWP_COREUTILS} \
+		${MWP_DEBUTILS} \
+		${MWP_UTIL_LINUX} \
+		${MWP_MODULE_INIT} \
+		${MWP_UDEV} \
+		;
+	do
+		build_package ${pkg} target
+	done
 }
 
 
@@ -279,3 +207,85 @@ create_image()
 }
 
 
+build_all_app()
+{
+	for pkg in \
+		${MWP_TSLIB} \
+		${MWP_ALSA_UTILS} \
+		${MWP_ALSA_LIB} \
+		${MWP_MADPLAY} \
+		${MWP_LIBMAD} \
+		${MWP_LIBID3TAG} \
+		${MWP_MPG123} \
+		${MWP_FAAD2} \
+		${MWP_JPEG} \
+		${MWP_LIBUNGIF} \
+		${MWP_LIBPNG} \
+		${MWP_FBV} \
+		${MWP_TIFF} \
+		${MWP_FREETYPE}  \
+		${MWP_DFB} \
+		${MWP_DFB_EX} \
+		${MWP_SDL} \
+		${MWP_SDL_MIXER} \
+		${MWP_SDL_IMAGE} \
+		${MWP_SDL_TTF} \
+		${MWP_MPLAYER} \
+		${MWP_PRBOOM} \
+		${MWP_WIRELESS_TOOLS} \
+		${MWP_LIBUSB_COMPAT} \
+		${MWP_USB_UTILS} \
+		${MWP_LIBUSB} \
+		${MWP_MTD_UTILS} \
+		${MWP_E2FS} \
+		;
+	do
+		build_package ${pkg} target
+	done
+}
+
+
+build_linux_kernel()
+{
+	KERNEL_TOP="${MW_TOP_DIR}/target/${MWP_KERNEL}"
+	KERN_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- INSTALL_MOD_PATH=${ROOTFS_PATH}"
+	
+	case "${TARGET_SOC}" in
+	*)
+		TARGET_MACH=realview
+		;;
+	esac
+	
+	if [ -e ${KERNEL_TOP}/${TARGET_MACH}_defconfig ]; then
+		cp -v ${KERNEL_TOP}/${TARGET_MACH}_defconfig arch/${TARGET_ARCH}/configs/
+	elif [ -e arch/${TARGET_ARCH}/configs/${TARGET_MACH}_defconfig ]; then
+		sed -i -e 's/# CONFIG_AEABI.*/CONFIG_AEABI=y/' \
+			-e '/CONFIG_OABI_COMPAT/d' \
+			-e '/CONFIG_AEABI/a\# CONFIG_OABI_COMPAT is not set/' \
+			-e 's/\(CONFIG_SYSFS_DEPRECATED.*\)=y/# \1 is not set/' \
+			arch/${TARGET_ARCH}/configs/${TARGET_MACH}_defconfig
+	else
+		echo "${TARGET_MACH}: no corresponding kernel configuration found!"
+		exit 1
+	fi
+	
+	make ${KERN_OPT} ${TARGET_MACH}_defconfig
+	
+	make ${KERN_OPT} ${BUILD_JOBS} && \
+	make ${KERN_OPT} modules_install ||  exit 1
+	echo
+	
+	case "${TARGET_ARCH}" in
+	x86 | i386 | x86_64)
+		cp -v ${PWD}/arch/${TARGET_ARCH}/boot/bzImage ${IMAGES_PATH}/bzImage.${TARGET_MACH}
+		;;
+	
+	mips*)
+		cp vmlinux ${IMAGES_PATH}/vmlinux.${TARGET_MACH}
+		;;
+	
+	*)
+		cp arch/${TARGET_ARCH}/boot/zImage ${IMAGES_PATH}/zImage.${TARGET_MACH}
+		;;
+	esac
+}

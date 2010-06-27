@@ -5,8 +5,8 @@
 	--prefix=/usr \
 	--enable-shared \
 	--enable-static \
-	--with-gmp=${1}/usr \
+	--with-gmp=${UTILS_ROOT}/usr \
 	|| exit 1
 
 make -j2 && \
-make DESTDIR=${1} install || exit 1
+make DESTDIR=${UTILS_ROOT} install || exit 1
