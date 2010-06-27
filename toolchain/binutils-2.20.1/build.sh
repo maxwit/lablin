@@ -21,4 +21,5 @@
 make && \
 make DESTDIR=${TOOLCHAIN_PATH} install || exit 1
 
-cp -v ../${MWP_BINUTILS}/include/libiberty.h ${ROOTFS_PATH}/usr/include
+cp -v ../${MWP_BINUTILS}/include/libiberty.h ${TOOLCHAIN_PATH}/usr/include
+# cp -v ../${MWP_BINUTILS}/include/libiberty.h ${ROOTFS_PATH}/usr/include

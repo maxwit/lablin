@@ -12,7 +12,7 @@
 	--with-sysroot=${ROOTFS_PATH} \
 	--with-gmp=${UTILS_ROOT}/usr \
 	--with-mpfr=${UTILS_ROOT}/usr \
-	--with-pkgversion="MaxWit Training, http://www.maxwit.com" \
+	--with-pkgversion="http://www.maxwit.com, MaxWit Training" \
 	--disable-multilib \
 	--disable-nls \
 	--enable-shared \

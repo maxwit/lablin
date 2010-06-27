@@ -4,7 +4,7 @@
 # http://maxwit.googlecode.com
 #
 
-echo "install_root=${ROOTFS_PATH}" > configparms
+echo "install_root=${TOOLCHAIN_PATH}" > configparms
 libc_cv_forced_unwind=yes \
 libc_cv_c_cleanup=yes \
 libc_cv_gnu99_inline=yes \
@@ -22,7 +22,13 @@ RANLIB="${TARGET_PLAT}-ranlib" \
 	--enable-kernel=2.6.0 \
 	--with-__thread \
 	--with-binutils=${TOOLCHAIN_PATH}/usr/bin \
-	--with-headers=${ROOTFS_PATH}/usr/include \
+	--with-headers=${TOOLCHAIN_PATH}/usr/include \
 	|| exit 1
 
 make && make install || exit 1
+
+# fixme
+mkdir -p ${ROOTFS_PATH}/usr && \
+cp -av ${TOOLCHAIN_PATH}/usr/include ${ROOTFS_PATH}/usr && \
+cp -av ${TOOLCHAIN_PATH}/usr/lib ${ROOTFS_PATH}/usr && \
+cp -av ${TOOLCHAIN_PATH}/lib ${ROOTFS_PATH}/ || exit 1

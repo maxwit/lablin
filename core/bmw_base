@@ -26,8 +26,6 @@ TOOLCHAIN_BUILD_PATH=${BUILD_PATH}/toolchain
 KERNEL_BUILD_PATH=${BUILD_PATH}/target
 APP_BUILD_PATH=${BUILD_PATH}/target
 
-# fixme
-mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
 
 if [ ! -d ${SRC_PATH} ]; then
 	SRC_PATH=${MAXWIT_TOP}/source
@@ -116,10 +114,6 @@ echo ${PATH} | grep "${TOOLCHAIN_PATH}" > /dev/null \
 	|| export PATH=${PATH}:${TOOLCHAIN_PATH}/usr/bin
 
 
-# mkdir -vp ${ROOTFS_PATH} ${TOOLCHAIN_PATH}
-mkdir -vp ${IMAGES_PATH}
-
-
 # $1: package name
 # $2: category
 unpack_to()
@@ -151,7 +145,7 @@ unpack_to()
 		return 0
 	fi
 
-	echo -n "Extracting \"${pkg}\" ."
+	echo -n "Extracting \"${pkg}\" "
 
 	if [ -z "${pkg}" ]; then
 		echo "target dir NOT specified!"
@@ -189,8 +183,6 @@ unpack_to()
 		mv glibc-ports-${GLIBC_VER} ${MWP_GLIBC}/ports
 		;;
 	esac
-
-	echo -n "."
 
 	echo  " OK."
 

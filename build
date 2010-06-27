@@ -40,6 +40,7 @@ if [ "${1}" == "all" ]; then
 		echo "Removing ${MAXWIT_TOP}/${dir}"
 		rm -rf ${MAXWIT_TOP}/${dir}
 	done
+	echo
  
 	build_utils && \
 	build_toolchain && \
@@ -50,6 +51,9 @@ if [ "${1}" == "all" ]; then
 
 	exit 0
 fi
+
+
+mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
 
 
 while true
