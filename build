@@ -67,6 +67,10 @@ do
 			"Create File System Images (UBI/YAFFS2/JFFS2,etc.)"
 
 	case $? in
+	0)
+		exit 1
+		;;
+
 	1)
 		grep "${MAXWIT_TOP}" /etc/exports > /dev/null 2>&1 || \
 		{
