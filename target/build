@@ -255,6 +255,8 @@ build_linux_kernel()
 		TARGET_MACH=realview
 		;;
 	esac
+
+	cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
 	
 	if [ -e ${KERNEL_TOP}/${TARGET_MACH}_defconfig ]; then
 		cp -v ${KERNEL_TOP}/${TARGET_MACH}_defconfig arch/${TARGET_ARCH}/configs/
