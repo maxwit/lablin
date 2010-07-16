@@ -126,7 +126,7 @@ unpack_to()
 	cd ${BUILD_PATH}/${cat}
 
 	case "${pkg}" in
-	binutils-* | gcc-* | glibc-*)
+	binutils-* | gcc-* | glibc-* | eglibc-*)
 		upkg=${pkg}-build
 		# rm -rf ${upkg}
 		mkdir -p ${upkg}
@@ -181,6 +181,9 @@ unpack_to()
 		rm -rf glibc-ports-${GLIBC_VER}
 		tar xf ${SRC_PATH}/glibc-ports-${GLIBC_VER}.tar.* || exit 1
 		mv glibc-ports-${GLIBC_VER} ${MWP_GLIBC}/ports
+		;;
+    eglibc-*)
+		tar xf ${SRC_PATH}/eglibc-ports-${GLIBC_VER}.tar.* -C ${MWP_GLIBC} || exit 1
 		;;
 	esac
 

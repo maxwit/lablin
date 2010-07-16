@@ -29,10 +29,13 @@ MWP_MPC="mpc-0.8.2"
 
 # toolchain packags:
 MWP_BINUTILS="binutils-2.20.1"
-MWP_GCC="gcc-4.5.0"
-GLIBC_VER="2.11"
-MWP_GLIBC="glibc-${GLIBC_VER}"
-MWP_GLIBC_PORTS="glibc-ports-${GLIBC_VER}"
+MWP_GCC="gcc-4.4.4"
+#GLIBC_VER="2.11"
+GLIBC_VER="2.10.1"
+#MWP_GLIBC="glibc-${GLIBC_VER}"
+#MWP_GLIBC_PORTS="glibc-ports-${GLIBC_VER}"
+MWP_GLIBC="eglibc-${GLIBC_VER}"
+MWP_GLIBC_PORTS="eglibc-ports-${GLIBC_VER}"
 
 
 # Lablin packages:
@@ -129,6 +132,8 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://ftp.gnu.org/gnu/libtool/${MWP_LIBTOOL}a.tar.gz \
 	http://ftp.gnu.org/gnu/glibc/${MWP_GLIBC}.tar.bz2 \
 	http://ftp.gnu.org/gnu/glibc/${MWP_GLIBC_PORTS}.tar.bz2 \
+    http://www.sunshinebrigadeguild.com/pub/clfs/conglomeration/eglibc/${MWP_GLIBC}.tar.bz2 \
+	http://www.sunshinebrigadeguild.com/pub/clfs/conglomeration/eglibc-ports/${MWP_GLIBC_PORTS}.tar.bz2 \
 	http://ftp.gnu.org/gnu/binutils/${MWP_BINUTILS}.tar.bz2 \
 	http://mirrors.kernel.org/gnu/gcc/${MWP_GCC}/${MWP_GCC}.tar.bz2 \
 	http://www.uclibc.org/downloads/${MWP_UCLIBC_LOCALE}.tgz \
@@ -178,6 +183,7 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://ftp.gnu.org/gnu/texinfo/${MWP_TEXINFO}a.tar.gz \
 	http://ftp.gnu.org/gnu/gmp/${MWP_GMP}.tar.bz2 \
 	http://www.mpfr.org/mpfr-current/${MWP_MPFR}.tar.bz2 \
+	http://www.multiprecision.org/mpc/download/${MWP_MPC}.tar.gz \
 	http://ftp.gnu.org/gnu/bash/${MWP_BASH}.tar.gz \
 	http://ftp.gnu.org/gnu/coreutils/${MWP_COREUTILS}.tar.gz \
 	http://www.scl.ameslab.gov/debian/pool/main/d/debianutils/${MWP_DEBUTILS}.tar.gz \
