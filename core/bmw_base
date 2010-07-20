@@ -126,7 +126,7 @@ unpack_to()
 	cd ${BUILD_PATH}/${cat}
 
 	case "${pkg}" in
-	binutils-* | gcc-* | glibc-* | eglibc-*)
+	binutils-* | gcc-* | glibc-* | eglibc-* | qtopia-*)
 		upkg=${pkg}-build
 		# rm -rf ${upkg}
 		mkdir -p ${upkg}

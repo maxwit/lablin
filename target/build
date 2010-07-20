@@ -209,6 +209,7 @@ create_image()
 
 build_all_app()
 {
+    ## FIXME! qtopia conflicts with libpng
 	for pkg in \
 		${MWP_TSLIB} \
 		${MWP_ALSA_UTILS} \
@@ -220,7 +221,7 @@ build_all_app()
 		${MWP_FAAD2} \
 		${MWP_JPEG} \
 		${MWP_LIBUNGIF} \
-		${MWP_LIBPNG} \
+		${MWP_QTOPIA} \
 		${MWP_FBV} \
 		${MWP_TIFF} \
 		${MWP_FREETYPE}  \

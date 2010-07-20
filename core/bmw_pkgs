@@ -75,7 +75,7 @@ MWP_GPM="gpm-1.20.5"
 MWP_MESA_GLUT="MesaGLUT-7.0.4"
 MWP_MESA_DEMO="MesaDemos-7.0.4"
 MWP_MESA_LIB="MesaLib-7.0.4"
-MWP_QTOPIA="qtopia-opensource-src-4.3.2 "
+MWP_QTOPIA="qtopia-opensource-src-4.3.3"
 MWP_QTE="qt-embedded-linux-opensource-src-4.4.1"
 MWP_BUSYBOX="busybox-1.16.1"
 MWP_UDEV="udev-136"
@@ -138,7 +138,7 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://mirrors.kernel.org/gnu/gcc/${MWP_GCC}/${MWP_GCC}.tar.bz2 \
 	http://www.uclibc.org/downloads/${MWP_UCLIBC_LOCALE}.tgz \
 	http://www.uclibc.org/downloads/${MWP_UCLIBC}.tar.bz2 \
-	ftp://ftp.trolltech.com/qtopia/source/${MWP_QTOPIA}.tar.gz \
+    http://www.qtextended.org/downloads/release/${MWP_QTOPIA}.tar.gz \
 	http://www.qtopia.org.cn/ftp/mirror/ftp.trolltech.com/qt/source/${MWP_QTE}.tar.gz \
 	http://www.zlib.net/${MWP_ZLIB}.tar.gz \
 	http://download.savannah.gnu.org/releases/freetype/${MWP_FREETYPE}.tar.bz2 \
