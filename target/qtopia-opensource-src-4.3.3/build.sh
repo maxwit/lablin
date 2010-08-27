@@ -4,6 +4,7 @@
 
 cd ../qtopia-opensource-src-4.3.3 && \
 sed -i '976 s/QPhoneProfile::Schedule::Schedule/QPhoneProfile::Schedule/' src/libraries/qtopia/qphoneprofile.cpp && \
+sed -i '130 s/\(.*O_CREAT | O_WRONLY\).*);/\1, 0777);/g' src/libraries/qtopiabase/qmemoryfile_unix.cpp && \
 cd ../qtopia-opensource-src-4.3.3-build \
 ||exit 1
 
