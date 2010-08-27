@@ -1,6 +1,9 @@
 #!/bin/sh
 #
 #
+GCC_VER=4.4.4
+cd $HOME/maxwit/toolchain/usr/${TARGET_PLAT}/include/c++/${GCC_VER}/bits && mv locale_classes.tcc locale_classes.tcc.bak &&
+sed -e "89,116s/dynamic_cast/static_cast/g" locale_classes.tcc.bak >locale_classes.tcc && cd - ||exit 1
 
 cd ../qtopia-opensource-src-4.3.3 && \
 sed -i '976 s/QPhoneProfile::Schedule::Schedule/QPhoneProfile::Schedule/' src/libraries/qtopia/qphoneprofile.cpp && \
@@ -32,3 +35,5 @@ cp -v ${subdir}/qtopia.sh ${ROOTFS_PATH}/etc/init.d/ || exit 1
 cd ${ROOTFS_PATH}/usr/bin &&
 ln -svf ../../opt/qtopia/bin/* . &&
 cd - || exit 1
+
+cd $HOME/maxwit/toolchain/usr/${TARGET_PLAT}/include/c++/${GCC_VER}/bits && mv locale_classes.tcc.bak locale_classes.tcc && cd - || exit 1
