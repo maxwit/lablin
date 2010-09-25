@@ -1,0 +1,12 @@
+diff -Nur madplay-0.15.2b/ltmain.sh madplay-0.15.2b_path/ltmain.sh
+--- madplay-0.15.2b/ltmain.sh	2004-02-17 09:56:42.000000000 +0800
++++ madplay-0.15.2b_path/ltmain.sh	2010-09-26 02:08:03.459332502 +0800
+@@ -2129,7 +2129,7 @@
+
+ 	# Find the relevant object directory and library name.
+ 	if test "X$installed" = Xyes; then
+-	  if test ! -f "$libdir/$linklib" && test -f "$abs_ladir/$linklib"; then
++	  if test -f "$abs_ladir/$linklib"; then
+ 	    $echo "$modename: warning: library \`$lib' was moved." 1>&2
+ 	    dir="$ladir"
+ 	    absdir="$abs_ladir"
