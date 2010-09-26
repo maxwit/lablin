@@ -49,6 +49,8 @@ MWP_DFB="DirectFB-1.4.3"
 MWP_DFB_EX="DirectFB-examples-1.2.0"
 MWP_DFB_DIR=${MWP_DFB%.[0-9]*}
 MWP_MPG123="mpg123-0.66"
+MWP_LIBMAD="libmad-0.15.1b"
+MWP_LIBID3TAG="libid3tag-0.15.1b"
 MWP_MADPLAY="madplay-0.15.2b"
 MWP_MPLAYER="MPlayer-1.0rc3"
 MWP_FAAD2="faad2-2.7"
@@ -65,8 +67,6 @@ MWP_LIBUNGIF="libungif-4.1.4"
 MWP_TIFF="tiff-3.8.2"
 MWP_TSLIB="tslib-1.0"
 MWP_NCURSES="ncurses-5.6"
-MWP_LIBMAD="libmad-0.15.1b"
-MWP_LIBID3TAG="libid3tag-0.15.1b"
 MWP_SDL="SDL-1.2.13"
 MWP_SDL_IMAGE="SDL_image-1.2.6"
 MWP_SDL_TTF="SDL_ttf-2.0.9"
@@ -153,6 +153,7 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	http://ftp.gnu.org/pub/gnu/ncurses/${MWP_NCURSES}.tar.gz \
 	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_LIBMAD}.tar.gz \
 	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_LIBID3TAG}.tar.gz \
+	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_MADPLAY}.tar.gz \
 	http://www.libsdl.org/release/${MWP_SDL}.tar.gz \
 	http://www.libsdl.org/projects/SDL_image/release/${MWP_SDL_IMAGE}.tar.gz \
 	http://www.libsdl.org/projects/SDL_ttf/release/${MWP_SDL_TTF}.tar.gz \
@@ -166,7 +167,6 @@ PLINK_LIST="http://www.kernel.org/pub/linux/kernel/v2.6/${MWP_KERNEL}.tar.bz2 \
 	ftp://ftp.alsa-project.org/pub/utils/${MWP_ALSA_UTILS}.tar.bz2 \
 	http://s-tech.elsat.net.pl/fbv/${MWP_FBV}.tar.gz \
 	http://mpg123.orgis.org/download/${MWP_MPG123}.tar.bz2 \
-	http://nchc.dl.sourceforge.net/sourceforge/mad/${MWP_MADPLAY}.tar.gz \
 	http://www3.mplayerhq.hu/MPlayer/releases/${MWP_MPLAYER}.tar.bz2 \
 	http://ncu.dl.sourceforge.net/sourceforge/faac/${MWP_FAAD2}.tar.bz2 \
 	http://ncu.dl.sourceforge.net/project/libusb/libusb-1.0/${MWP_LIBUSB}/${MWP_LIBUSB}.tar.bz2 \
