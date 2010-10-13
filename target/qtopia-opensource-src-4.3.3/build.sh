@@ -28,7 +28,7 @@ cp -r ${HOME}/maxwit/toolchain/usr/share/zoneinfo/ ${ROOTFS_PATH}/usr/share/
 
 ## copy config && startup file
 mkdir -pv ${ROOTFS_PATH}/etc/init.d &&
-cp -v ${subdir}/qtopia.sh ${ROOTFS_PATH}/etc/init.d/ || exit 1
+cp -v `dirname $0`/qtopia.sh ${ROOTFS_PATH}/etc/init.d/ || exit 1
 
 ## FIXME!
 ## can't set $PATH in busybox

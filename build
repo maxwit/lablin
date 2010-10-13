@@ -48,6 +48,7 @@ if [ "${1}" == "all" ]; then
 	build_basic_rootfs && \
 	build_linux_kernel && \
 	build_all_app && \
+	build_qtopia && \
 	run_qemu
 
 	exit 0
@@ -64,6 +65,7 @@ do
 			"Build GNU Toolchain and Emulator" \
 			"Build Basic System (${MWP_KERNEL} & busybox)" \
 			"Build Applications (Lib/App/Games)" \
+			"Build Qtopia" \
 			"Testing on QEMU" \
 			"Create File System Images (UBI/YAFFS2/JFFS2,etc.)"
 
@@ -101,10 +103,13 @@ do
 		;;
 
 	5)
+		build_qtopia || exit 1
+		;;
+	6)
 		run_qemu
 		;;
 
-	6)
+	7)
 		create_image
 		;;
 

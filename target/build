@@ -221,7 +221,6 @@ build_all_app()
 		${MWP_FAAD2} \
 		${MWP_JPEG} \
 		${MWP_LIBUNGIF} \
-		${MWP_QTOPIA} \
 		${MWP_FBV} \
 		${MWP_TIFF} \
 		${MWP_FREETYPE}  \
@@ -245,6 +244,14 @@ build_all_app()
 	done
 }
 
+
+build_qtopia()
+{
+	for pkg in ${MWP_QTOPIA}
+	do
+		build_package ${pkg} target
+	done
+}
 
 build_linux_kernel()
 {
