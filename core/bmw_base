@@ -9,7 +9,7 @@
 #
 
 
-SRC_PATH=/work/source
+SRC_PATH=/maxwit/source
 
 MAXWIT_TOP=${HOME}/maxwit
 ROOTFS_PATH=${MAXWIT_TOP}/rootfs
