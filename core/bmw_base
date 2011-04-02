@@ -11,7 +11,7 @@
 
 SRC_PATH=/maxwit/source
 
-MAXWIT_TOP=${HOME}/maxwit
+MAXWIT_TOP=/maxwit/lablin
 ROOTFS_PATH=${MAXWIT_TOP}/rootfs
 TOOLCHAIN_PATH=${MAXWIT_TOP}/toolchain
 BUILD_PATH=${MAXWIT_TOP}/build

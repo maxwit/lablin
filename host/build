@@ -18,6 +18,7 @@ QEMU_MACH_IP="10.0.0.2"
 
 build_utils()
 {
+	return 0 # fixme
 	mkdir -vp ${UTILS_ROOT}/usr/bin
 	mkdir -vp ${UTILS_ROOT}/usr/lib
 	mkdir -vp ${UTILS_ROOT}/usr/share/man/man1
