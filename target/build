@@ -18,7 +18,7 @@ build_basic_rootfs()
 
 	echo -n "Initializing rootfs "
 
-	for dir in `ls ${APP_BUILD_PATH}`
+	for dir in `ls ${APP_BUILD_PATH} 2>/dev/null`
 	do
 		if [ $dir != ${MWP_KERNEL} ]; then
 			rm -rf ${APP_BUILD_PATH}/${dir}
@@ -119,10 +119,23 @@ run_qemu()
 {
 	QEMU_CONSOLE=0
 	QEMU_MACH="realview"
+	QEMU_HOST_IP=10.0.0.1
+	QEMU_MACH_IP=10.0.0.10
 
 	if [ x"${QEMU_CONSOLE}" != x"1" ]; then
 		EXTRA_QEMU_OPT="-serial stdio"
 		EXTRA_COMMAND_LINE="console=ttyAMA0" # fixme
+	fi
+
+	# fixme
+	if [ -e /etc/qemu-ifup ]; then
+		for str in `awk '{print $3}' /etc/qemu-ifup`;
+		do
+			if [ x"${str}" != x ]; then
+				QEMU_HOST_IP=${str};
+				QEMU_HOST_IP=${str}0;
+			fi
+		done
 	fi
 
 	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log

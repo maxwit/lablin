@@ -1,0 +1,552 @@
+\ifx \inmaxwitbook \undefined
+\documentclass[a4paper,11pt]{article}
+
+\include{style}
+
+
+\setlength{\parindent}{2em}
+
+\begin{CJK*}{UTF8}{gbsn}
+\title{g-bios开发者手册（第1卷：使用入门）}
+\author{MaxWit魔鬼训练营}
+\end{CJK*}
+
+%\renewcommand{\baselinestretch}{1.3}
+\linespread{1.3}
+
+\begin{document}
+\AtBeginDvi{\special{pdf:tounicode UTF8-UCS2}}
+\begin{CJK*}{UTF8}{gbsn}
+\CJKtilde
+\maketitle
+\tableofcontents
+
+\fi
+
+\clearpage
+%\chapter{Embedded System and Embedded OS}
+\section{Labin~体系结构}
+\subsection{Lablin~介绍}
+\subsection{Lablin~体系结构}
+
+WinCE, WebOS, BlackBerry, iOS, Linux, Android, Bada, meego
+\section{~X86~体系结构}
+\subsection{~Host and target~}
+\begin{enumerate}
+\item 开发板~(target)~与~PC~机~(host)~之间的连接线/通信
+	\begin{enumerate}
+	\item 网线~(RJ45)
+	\item USB~(可充当网线)
+		\begin{enumerate}\setlength{\itemsep}{-\itemsep}
+		\item Usb device(power, Mass starge, Usb modem, NIC)
+		\item Usb host
+		\end{enumerate}
+	\item JTAG
+	\item 串口~(RS232)URAT
+	\item WiFi
+	\item Bluetooth
+	\end{enumerate}
+\end{enumerate}
+\subsection{~Host~开发环境}
+\begin{enumerate}
+\item Minicom/kermit 
+\item Nfs/tftp 
+\item ADS/XDB(pxa168)/OpenOCD$\rightarrow$GDB
+\item Mount, ppp(modem)
+\item GNU Toolchain(cross)
+\item qemu
+\end{enumerate}
+
+% \section{~Host~端发行版的选择及软件安装}
+% \subsection{关于~Linux~发行版}
+% 目前已测试通过的发行版有（包括64位版）：~Debian 5.0~、~Ubuntu 9.04~、~Ubuntu 8.10~、~Fedora Core 10~，推荐使用~Debian 5.0~。若有人有兴趣测试并支持其他~Linux~发行版，欢迎把~patch~发给~Maxwit~项目维护者：
+% 
+% \begin{tabular}[t]{|l|c|}
+% \hline
+% 维护者 & 邮箱 \\
+% \hline
+% Conke Hu & conke@maxwit.com \\
+% Tiger Yu & tiger@maxwit.com \\
+% Fleya Hou & fleya@maxwit.com \\
+% \hline
+% \end{tabular}
+% 
+% \subsection{安装软件包}
+% 必须安装的软件包：
+% 
+% ~gcc~，g++，make，subversion，git-core，tftpd-hpa，tftp-hpa，nfs-kernel-server，libsdl及其dev包，autoconf，automake，m4，libtool，
+% 
+% 64位系统上需要额外安装的软件包：
+% 
+% ~libc6-dev-i386~
+% 
+% ~Debian~或~Ubuntu~系统上可通过如下命令安装有软件包：
+% \begin{lstlisting}[language=bash,numbers=none]
+% $apt-get install gcc g++ make subversion git-core libncures5-dev zliblg-dev libsdl1.2-dev tftpd-hpa nfs-kernel-server autoconf automake m4 libtool
+% \end{lstlisting}
+% 注：Ubuntu用户还需执行以下操作
+% \begin{lstlisting}[language=bash,numbers=none]
+% $dpkg-reconfigure dash
+% \end{lstlisting}
+% 然后选择``no''，执行ls -l ~/bin/sh~确认已指向~/bin/bash~。\\
+% 
+% \section{~Host~ 端设置}
+% 
+% \subsection{安装~NFS~ ~Server~}
+% 
+% \begin{lstlisting}[language=bash,numbers=none]
+% $apt-get install nfs-kerne-server 
+% \end{lstlisting}
+% 
+% 第二步，编辑/etc/exports文件，添加下面两行：
+% 
+% /root/maxwit/rootfs  *(rw, sync, no\_root\_squash,no\_subtree\_check)
+% 
+% 第三步，重启~NFS~ ~Server~:
+% 
+% \# /etc/init.d/nfs-kernel-server restart
+% 
+% 第四步，测试~NFS~ ~Server~:
+% 
+% \# ~mount~ -t ~nfs~ 192.168.0.111:/root/maxwit/rootfs /mnt/
+% 
+% (假定本机IP为192.168.0.111)
+% 
+% \subsection{安装Kermit}
+% 
+% 第一步，从源码安装~Kermit~(若前面已安装~kermit~,则略过这一步)
+% 
+% ~make~ ~linux~ \&\& ~make~ ~install~
+% 
+% ~wget~ http://maxwit.googlecode.com/files/kermrc
+% 
+% cp -v kermrc  $\sim$/.kermrc
+% 
+% 第二步，打开$\sim$/.kermrc,修改``set line''一行，确认你所用的串口设备，若用的是USB-to-Serial转接器，可以改成：``set line /dev/ttyUSB0''
+% 
+% \subsection{安装TFTP Server}
+% \
+% 
+% 第一步，编译tftp软件（如果前面已经通过apt方式安装了tftp,则跳过这一步）
+% 
+% 
+% \# tar jxvf tftp-hpa-0.40.tar.bz2 
+% 
+% \#./configure --prefix=/usr
+% 
+% \# ~make~ \&\& ~make~ ~install~
+% 
+% 第二步，更改~tftpd~下载目录
+% ~tftp~服务器的默认下载目录是/var/lib/tftpboot,我们要改为\$\{HOME\}/maxwit/images.
+% 
+% 打开/etc/inetd.conf,找到以``tftpd''开头的一行，将其中的/var/lib/tftpboot改为
+% t 方式
+% 
+% \$\{HOME\}/maxwit/images:
+% 
+% ~tftp~   ~dgram~    ~udp~  ~wait~   ~root~    /usr/sbin/in.tftpd   /usr/sbin/in.tftpd --S
+% 
+% \$\{HOME\}/maxwit/images
+% 
+% 第三步，/etc/init.d/tftpd-hpa ~restart~
+% 
+% 第四步，测试~tftp~ ~server~
+% 
+% \# ~cd~ /~tmp~
+% 
+% \# ~echo~ ~hello~ $>$ ~/images/test
+% 
+% \# ~chmod~ 666 ~/images/test
+% 
+% \# ~tftp~ 192.168.0.111(假定本机IP为192.168.0.111)
+% 
+% $>$~get~ ~test~
+% 
+% $>$~quit~
+% 
+% \# ~cat~ ~test~
+% 
+% \# rm test ~/images/test
+% 
+
+\section{使用~Powertool~源码}
+\section{使用~Lablin~源码}
+\subsection{获取~Lablin~最新源码}
+在MaxWit~开放实验室的开源项目主页(http://maxwit.googlecode.com)~的``Source''~页面上可以下载到全部源码。google~提供的默认下载方式是： \\
+\begin{lstlisting}[language=bash,numbers=none]
+$ cd
+$ git clone git://github.com/maxwit/lablin.git
+\end{lstlisting}
+
+\subsection{~Lablin~源码目录介绍}
+
+\begin{equation*}
+	\text{Lablin}
+    \left\{
+        \begin{aligned}
+            \text{build$\rightarrow$}&
+			\left\{
+				\begin{aligned}
+				\text{Lablin building Menu}\\ 
+				\end{aligned}
+			\right.\\
+            \text{core} &
+            \left\{
+                \begin{aligned}
+                    \text{bmw\_base}\\
+                    \text{bmw\_menu}\\
+					\text{bmw\_pkgs}
+                \end{aligned}
+            \right\}
+			\text{公共环境变量和函数host~端设置}\\
+            \text{target} &
+            \left\{
+                \begin{aligned}
+                    \text{build}\\
+                    \text{DirectFB-1.4.3} &
+					\left\{
+						\begin{aligned}
+							\text{build.sh}\\
+							\text{dep}\\
+							\text{fix\_for\_libpng-1.4.2.patch}
+						\end{aligned}
+					\right.\\
+					\text{...}\\
+                \end{aligned}
+            \right\}
+			\text{目标板环境的搭建}\\
+            \text{doc} &
+            \left\{
+                \begin{aligned}
+                    \text{Chinese}\\
+                    \text{labin\_arch.jpg}
+                \end{aligned}
+            \right\}
+			\text{Lablin~使用文档}
+        \end{aligned}
+    \right.
+\end{equation*}
+
+% \begin{numcases}{Lablin} 
+% build & Lablin building Menu\\
+% core & 公共环境变量和函数host~端设置\\
+% target &目标板环境的搭建\\
+% doc & Lablin~使用文档
+% \end{numcases} 
+
+执行build~文件，即进入~Lalin Building Menu~。
+\noindent~Lablin Building Menu~（如下）：\\
+\begin{verbatim}
+[MaxWit Lablin Building Menu] (for AT91SAM9263)
+
+     1). Build Basic System (linux-2.6.29.4 & busybox)
+     2). Build Applications (Lib/App/Games)
+     3). Build Qtopia
+     4). Testing on QEMU
+     5). Create File System Images (UBI/YAFFS2/JFFS2,etc.)
+     x). Exit
+
+Your choice[1-5]? 
+\end{verbatim}
+\noindent以下是各选项的详解：\\
+\begin{table}[htbp]
+\begin{tabular}{|p{5cm}|p{6cm}|}
+\hline
+\textbf{Options} & \textbf{Function Description} \\ \hline
+Build Basic System(linux-2.6.29.4 \& busybox) & 默认编译~realview~的~kernel~和一个基本的系统。\\ \hline
+Build Applications(Lib/App/Games) & 编译相关依赖库，应用程序。\\ \hline
+Build Qtopia & 编译桌面系统~Qtopia~。\\ \hline
+Testing on QEMU & 用~qemu~测试编译好的系统（注：编译生成的文件系统在\$HOME/maxwit/rootfs~目录下）。\\ \hline
+Create File System Images(UBI/YAFFS2/JFFS2,etc.) & 创建~rootfsimage~，即将\$HOME/maxwit/rootfs~目录下做成各种文件类型的~image~，并存放到\$HOME/maxwit/images~目录中。 \\ \hline
+\end{tabular}
+\end{table}
+\pagebreak[4]
+
+
+\subsection{~Lablin~生成目录介绍}
+~Lablin~编译后完成后，会在~\$HOME~目录下生成~maxwit~文件夹，~maxwit~文件中目录结构如下所示：
+\begin{numcases}{maxwit}
+build & 源码包编译的地方\\
+images & 存放各种image(kernel image、bootloader image、rootfs image)\\
+rootfs & 根文件系统\\
+source & 存放源码包的地方。如果存在~/work/source~，则该文件夹不存在 \\
+toolchain & 交叉编译工具\\
+utils & 编译过程中所需工具
+\end{numcases}
+\subsection{安装~Toolchain~}
+见PowerTool~相关文档。
+
+\subsection{编译~Lablin~基本系统}
+\begin{lstlisting}[language=sh,numbers=none]
+$ cd ~/lablin
+$ ./build
+\end{lstlisting}
+\noindent选择
+\begin{verbatim}
+1). Build Basic System (linux-2.6.29.4 & busybox)
+\end{verbatim}
+
+至少要编译``Basic System''~，这样一个基本的嵌入式~Linux~系统就能跑起来，但想要加入丰富的软件，还要继续编译``Libraries''、``Applications''和``Game''等其他模块（第一次执行时，脚本会自动下载所需的第三方源码包。）
+
+再依次选择2、4，看到小企鹅和~console~了吗？尽情玩吧，目前~Lablin~里已经有不少有趣的小东东了。当然，最有趣也更重要的是，我们一起参与开发，一起来完善她！
+
+\section{模拟器中运行Lablin}
+\subsection{QEMU安装}
+
+\subsubsection{安装}
+\noindent
+~qemu~的安装及参数详解
+\begin{enumerate}
+\item 获取~qemu~源码（撰写本文时~qemu~最新为0.10.2）.
+\begin{lstlisting}[language=sh, numbers=none]
+$ wget http://???
+$ tar jxvf qemu-0.10.2.tar.bz2
+\end{lstlisting}
+\item Configuration
+\begin{lstlisting}[language=sh, numbers=none]
+$ cd qemu-0.10.2
+$ ./configure --prefix=/usr --target-list=arm-softmmu,mips-softmmu,mipsel-soft-mmu
+\end{lstlisting}
+\item 编译并安装
+\begin{lstlisting}[language=sh, numbers=none]
+$ make
+$ make install 
+\end{lstlisting}
+将在~/usr/bin/~目录下生成如下程序：
+\end{enumerate}
+
+\subsubsection{~QEMU~ ~for~ ~MIPS~}
+\begin{enumerate}
+\item 项目描述
+
+不需要硬件平台
+
+\item 系统要求
+
+SDL~开发库
+
+losetup~工具
+
+\item ~qemu~命令行参数
+
+~qemu-system-mipsel~:
+
+-M malta...
+
+\item 编译~Toolchain~
+
+参照脚本
+
+使用最新版~gcc!~
+
+\item 编译~Mips Linux~内核
+\begin{lstlisting}[language=sh, numbers=none]
+$ make ARCH=mips_makta_defconfig
+$ make ARCh=mips_CROSS_COMPOILE=mipsel-linux-
+$ make
+\end{lstlisting}
+使用qemu测试你的内核
+
+\begin{lstlisting}[language=sh, numbers=none]
+$ qemu-systerm-mipsel -M malta -kernek vmlinux -serial stdio -append "root=/dev/hda1 console=ttyS0"
+\end{lstlisting}
+
+\item 制作~Hard Disk image~
+
+\begin{lstlisting}[language=sh, numbers=none]
+$ dd if=/dev/zero of=rfs,img bs=1024 count=16k
+$ fdisk -C 128 rfs,img
+\end{lstlisting}
+
+
+N $\rightarrow$ p $\rightarrow$ q
+\begin{lstlisting}[language=sh, numbers=none]
+$ losetup -O 32256 /dev/loop1 rfs,img
+$ mkfs.ext4 /dev/loop1
+$ mount /dev/loop1 /mnt/1
+\end{lstlisting}
+测试~HD image~
+\begin{lstlisting}[language=sh, numbers=none]
+$ qemu-system-mipsel -M malta -Kernel vmlinux -had rfs.img
+\end{lstlisting}
+\item 创建~rootfs~
+
+Busybox
+
+Copy libc
+
+\item 运行整个~MIPS Linux~
+
+Console
+
+tty
+
+\item 完善
+rcS
+mount /proc
+mount /sys
+mdev/udev
+\end{enumerate}
+
+\subsubsection{QEMU for ARM}
+
+\section{运行~Lablin~(基于实际硬件平台)}
+\subsection{编译~Bootloader~}
+
+这里，我们使用~g-bios~作为~Lablin~的~bootloader~，当然，你也可以使用其他的~bootloader~，但我们认为~g-bios~跟强，更方便，可以提高整个工作效率。
+
+BTW~，我们以~ATMEL AT91SAM9263~为示例硬件平台，你可以使用~S3C24XX~或其他的平台。另外，为了简化，目前的这个文档只介绍~NFS root~方式启动，当然，~Native~方式（直接从~Flash~启动）也支持得很好，你可以自己试试。
+
+第一步，配置
+\begin{lstlisting}[language=c,numbers=none]
+$ cd ~/g-bios
+$ make **_defconfig
+\end{lstlisting}
+Platform~选择~AT91SAM9263~
+
+第二步，编译
+\begin{lstlisting}[language=c,numbers=none]
+$ make
+\end{lstlisting}
+会生成~g-bios-th.bin~和~g-bios-bh.bin~并已自动~copy~到$\sim$/maxwit/images~下，以备后继下载和烧录。（g-bios-th.bin~和~g-bios-bh.bin~分别对应~g-bios~上半部和下半部。）
+
+\subsection{编译~Linux Kernel}
+第一步，解压~Linux Kernel
+\begin{lstlisting}[language=c,numbers=none]
+$ tar jxf linux-2.6.28.tar.bz2
+$ cd linux-2.6.28
+\end{lstlisting}
+
+第二步，配置~Kernel
+
+\begin{lstlisting}[language=c,numbers=none]
+$ make ARCH=arm at91sam9263ek_defconfig
+$ make ARCH=arm menuconfig
+\end{lstlisting}
+
+然后编译以下几个选项：\\
+(1)``Kernel Features''$\rightarrow$选上~EABI~选项，并去掉~OABI!~\\
+(2)``Network file system''$\rightarrow$选上``NFS client''~和~``Root file system on NFS''~保存，退出
+
+第三步，编译
+\begin{lstlisting}[language=c,numbers=none]
+$ make ARCH=arm CROSS_COMPILE=arm-maxwit-linux-gnueabi- --j4
+$ cp -v arch/arm/boot/zImage ~/maxwit/images
+\end{lstlisting}
+
+\subsection{烧录~images~}
+第一步，接上~USB~线和网线.
+
+第二步，先将跳线拔到~off~位置，然后上电！
+\begin{lstlisting}[language=c,numbers=none]
+$ lsusb
+\end{lstlisting}
+你将会看到``Atmel....''~的字样，否则，先断电，然后重做第一步和第二步。
+
+第三步，安装开发板驱动。
+
+首先删除所有~usbserial~模块：
+
+\begin{lstlisting}[language=c,numbers=none]
+$ lsmod | grep \^usbserial
+$ rmmod xxx
+$ rmmod usbserial
+\end{lstlisting}
+
+然后安装开发板驱动：
+\begin{lstlisting}[language=c,numbers=none]
+$ modprobe usbserial vendor=0x03eb product=0x6124
+\end{lstlisting}
+查看~USB~设备是否创建：
+
+\begin{lstlisting}[language=c,numbers=none]
+$ ls/dev/ttyUSB*
+\end{lstlisting}
+
+第四步，安装并运行~SAM-BA~
+
+\begin{lstlisting}[language=c,numbers=none]
+$ unzip sam-ba_cdc_2.7.linux_01.zip
+$ cd sam-ba_cde_2.7.linux_01
+$ ./sam-ba_cdc_2.7.linux_01
+\end{lstlisting}
+
+选择~AT91SAM9263-EK~，然后点击~``Connect''~
+
+第五步，烧写~g-bios~的上半部。
+
+将跳线拨到~on~位置，然后执行下列操作
+``Enable Dataflash''$\rightarrow$Execute
+
+``Erase All''$\rightarrow$Execute
+
+``Send Boot File''$\rightarrow$Execute$\rightarrow$Select g-bios-th.bin.OK
+
+第六步，烧写~g-bios~下半部。
+
+可参考~g-bios~开发者手册烧录~g-bios-bh.bin~
+再按下开发板~Reset~键，然后选择1(从~Flash~中启动)，回车，进入~g-bios~命令行。
+
+\subsection{启动~Lablin~}
+如前所述，但为了方便起见，我们先用~TFTP + NFS~方式启动~Linux~。
+在~g-bios~命令行下，输入：
+
+\begin{lstlisting}[language=c,numbers=none]
+$ boot -t zImage -n
+\end{lstlisting}
+
+[说明]
+
+$>$ -t [filename]：用~tftp~方式下载指定的~kernel image~。
+
+$>$ -n [nfs\_server:/nfs/path/]：用~NFS~方式~mount rootfs~。也可以加上参数，如：
+``-n 192.168.0.111:/path/to/nfs''。
+
+$>$ ~boot~程序具有记忆功能，即能记住用户输入的参数，换句话说，再次输入~boot~时不再，需要输入参数了，除非你想重设参数。
+
+现在看到~``maxwit login:''~的登陆提示符了吗?
+
+用~root~用户登陆，输入~root~回车，进入系统~Lablin~里已经有不少有趣的小东东了。~Enjoy yourself now!~
+
+这个文档可能有疏漏的地方，但实际的操作步骤我们已经测过多遍，所以一定能跑起来，若有任何疑问，可以在~ChinaUnix~的~MaxWit~版块上发贴讨论，或直接给我们发~mail~。不怕路远的朋友还可直接来上海的~MaxWit~开放实验室~face-to-face~地交流!
+\section{体验~Lablin~}
+已支持：
+
+不支持：蓝牙
+
+\subsection{图片浏览}
+~Lablin~图片浏览软件为~fbv~，用~fbv~软件打开/root/g-bios.jpg图片。
+\begin{lstlisting}[numbers=none]
+# fbv /root/g-bios.jpg
+\end{lstlisting}
+效图如下图所示。
+
+\subsection{音/视频播放}
+还记得第一章中源码编译的~mpg123 mp3~播放器吗？~Lablin~中也有移植这个软件哦:)
+\begin{lstlisting}[numbers=none]
+# mpg123 /root/22.mp3
+\end{lstlisting}
+
+~Lablin~中移植了~mplayer~视频插放器。在/root的目录下存放了一个beer.mpg视频。一起感受一下：
+\begin{lstlisting}[numbers=none]
+# mplayer /root/berr.mpg
+\end{lstlisting}
+效图如下图所示。
+
+RMVB?
+
+\subsection{3D~游戏}
+3D游戏doom。
+\begin{lstlisting}[numbers=none]
+# doom
+\end{lstlisting}
+\subsection{Wi-Fi}
+\subsection{USB}
+\subsection{SD~卡}
+
+\section{Labin~API}
+
+\ifx \inmaxwitbook \undefined
+\end{CJK*}
+\end{document}
+\fi

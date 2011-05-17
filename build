@@ -21,16 +21,14 @@ MW_TOP_DIR=${PWD}
 . core/bmw_pkgs
 . core/bmw_base
 
-. host/build
-. toolchain/build
 . target/build
 
 
 BUILD_JOBS="-j1"
 
 
-#echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
-#export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
+echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
+export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
 
@@ -40,11 +38,17 @@ if [ "${1}" == "all" ]; then
 		echo "Removing ${MAXWIT_TOP}/${dir}"
 		rm -rf ${MAXWIT_TOP}/${dir}
 	done
-	mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
+	mkdir -vp ${BUILD_PATH}
+	mkdir -vp ${ROOTFS_PATH}
+	mkdir -vp ${IMAGES_PATH}
+	mkdir -vp ${UTILS_BUILD_PATH}
+	mkdir -vp ${TOOLCHAIN_BUILD_PATH}
+	mkdir -vp ${KERNEL_BUILD_PATH}
+	mkdir -vp ${APP_BUILD_PATH}
 	echo
  
-	build_utils && \
-	build_toolchain && \
+	##fix me
+	# check powertool, if exist, skipping. otherwise checkout powertool for server and build it.
 	build_basic_rootfs && \
 	build_linux_kernel && \
 	build_all_app && \
@@ -61,8 +65,6 @@ mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
 while true
 do
 	show_menu "[MaxWit Lablin Building Menu] (for ${TARGET_SOC})" \
-			"Host Check & Setup (sudo)" \
-			"Build GNU Toolchain and Emulator" \
 			"Build Basic System (${MWP_KERNEL} & busybox)" \
 			"Build Applications (Lib/App/Games)" \
 			"Build Qtopia" \
@@ -75,41 +77,26 @@ do
 		;;
 
 	1)
-		grep "${MAXWIT_TOP}" /etc/exports > /dev/null 2>&1 || \
-		{
-			sudo chmod 666 /etc/exports
-			echo >> /etc/exports
-			echo "${MAXWIT_TOP} *(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports
-			sudo exportfs
-		}
 
-		qemu_setup
-		;;
-
-	2)
-		# build_emulator && \
-		build_utils && \
-		build_toolchain || exit 1
-	    ;;
-
-	3)
+	##fix me
+	# check powertool, if exist, skipping. otherwise checkout powertool for server and build it.
 		build_linux_kernel || exit 1
 		build_basic_rootfs || exit 1
 		# build_root_std || exit 1
 		;;
 
-	4)
+	2)
 		build_all_app || exit 1
 		;;
 
-	5)
+	3)
 		build_qtopia || exit 1
 		;;
-	6)
+	4)
 		run_qemu
 		;;
 
-	7)
+	5)
 		create_image
 		;;
 
