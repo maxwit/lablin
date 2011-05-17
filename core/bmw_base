@@ -9,16 +9,18 @@
 #
 
 
-SRC_PATH=/maxwit/source
+MAXWIT_TOP=/maxwit
 
-MAXWIT_TOP=/maxwit/lablin
-ROOTFS_PATH=${MAXWIT_TOP}/rootfs
-TOOLCHAIN_PATH=${MAXWIT_TOP}/toolchain
-BUILD_PATH=${MAXWIT_TOP}/build
-IMAGES_PATH=${MAXWIT_TOP}/images
+LABLIN_TOP=${MAXWIT_TOP}/lablin
+SRC_PATH=${MAXWIT_TOP}/source
+
+ROOTFS_PATH=${LABLIN_TOP}/rootfs
+TOOLCHAIN_PATH=${LABLIN_TOP}/toolchain
+BUILD_PATH=${LABLIN_TOP}/build/labin
+IMAGES_PATH=${LABLIN_TOP}/images
 
 # host utils
-UTILS_ROOT=${MAXWIT_TOP}/utils
+UTILS_ROOT=${LABLIN_TOP}/utils
 
 # sub dirs in $BUILD_PATH
 UTILS_BUILD_PATH=${BUILD_PATH}/host
@@ -28,7 +30,7 @@ APP_BUILD_PATH=${BUILD_PATH}/target
 
 
 if [ ! -d ${SRC_PATH} ]; then
-	SRC_PATH=${MAXWIT_TOP}/source
+	SRC_PATH=${LABLIN_TOP}/source
 	mkdir -vp ${SRC_PATH}
 fi
 

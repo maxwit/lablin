@@ -145,7 +145,7 @@ run_qemu()
 create_image()
 {
 	local IMAGE_PREFIX=rootfs
-	local IMG_RFS_PATH=${MAXWIT_TOP}/rootfs_final
+	local IMG_RFS_PATH=${LABLIN_TOP}/rootfs_final
 
 	cp -av ${ROOTFS_PATH} ${IMG_RFS_PATH}
 

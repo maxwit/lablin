@@ -33,11 +33,12 @@ export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
 
 if [ "${1}" == "all" ]; then
-	for dir in `ls ${MAXWIT_TOP}`
+	for dir in `ls ${LABLIN_TOP}`
 	do
-		echo "Removing ${MAXWIT_TOP}/${dir}"
-		rm -rf ${MAXWIT_TOP}/${dir}
+		echo "Removing ${LABLIN_TOP}/${dir}"
+		rm -rf ${LABLIN_TOP}/${dir}
 	done
+
 	mkdir -vp ${BUILD_PATH}
 	mkdir -vp ${ROOTFS_PATH}
 	mkdir -vp ${IMAGES_PATH}
@@ -45,6 +46,7 @@ if [ "${1}" == "all" ]; then
 	mkdir -vp ${TOOLCHAIN_BUILD_PATH}
 	mkdir -vp ${KERNEL_BUILD_PATH}
 	mkdir -vp ${APP_BUILD_PATH}
+
 	echo
  
 	##fix me
@@ -58,9 +60,13 @@ if [ "${1}" == "all" ]; then
 	exit 0
 fi
 
-
-mkdir -vp ${BUILD_PATH} ${IMAGES_PATH}
-
+mkdir -vp ${BUILD_PATH}
+mkdir -vp ${ROOTFS_PATH}
+mkdir -vp ${IMAGES_PATH}
+mkdir -vp ${UTILS_BUILD_PATH}
+mkdir -vp ${TOOLCHAIN_BUILD_PATH}
+mkdir -vp ${KERNEL_BUILD_PATH}
+mkdir -vp ${APP_BUILD_PATH}
 
 while true
 do
