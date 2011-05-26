@@ -10,7 +10,7 @@
 
 
 # Toolchain packages:
-MWP_KERNEL="linux-2.6.29.4"
+MWP_KERNEL="linux-2.6.38"
 
 # utils packages:
 MWP_PATCH="patch-2.5.9"

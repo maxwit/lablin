@@ -39,13 +39,10 @@ build_basic_rootfs()
 	done
 
 	# fixme
-	cp -a ${TOOLCHAIN_PATH}/usr/${TARGET_PLAT}/lib/*.so* lib/
+	cp -av ${TOOLCHAIN_PATH}/lib/*.so* lib/ && \
+	cp -av ${TOOLCHAIN_PATH}/usr/lib/*.so* usr/lib/ && \
+	cp -av ${TOOLCHAIN_PATH}/usr/${TARGET_PLAT}/lib/*.so* lib/ || exit 1
 	echo -n "."
-
-	# cp -a ${ROOTFS_PATH}/lib/*.so* lib/
-	# cp -a ${ROOTFS_PATH}/usr/${TARGET_PLAT}/lib/*.so* usr/lib/
-	# cp -a ${ROOTFS_PATH}/usr/lib/*.so* usr/lib/
-	# echo -n "."
 
 	if [ ${USER} = root ]; then
 		[ -e ${ROOTFS_PATH}/dev/console ] || \
@@ -133,12 +130,11 @@ run_qemu()
 		do
 			if [ x"${str}" != x ]; then
 				QEMU_HOST_IP=${str};
-				QEMU_HOST_IP=${str}0;
 			fi
 		done
 	fi
 
-	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGES_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log
+	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGE_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log
 }
 
 
@@ -147,6 +143,7 @@ create_image()
 	local IMAGE_PREFIX=rootfs
 	local IMG_RFS_PATH=${LABLIN_TOP}/rootfs_final
 
+	rm -rf ${IMG_RFS_PATH}
 	cp -av ${ROOTFS_PATH} ${IMG_RFS_PATH}
 
 	cd ${IMG_RFS_PATH}
@@ -183,33 +180,33 @@ create_image()
 		TOOL_PATH=`which ${img_tool}`
 		case "$TOOL_PATH" in
 		*mkyaffsimage)
-			echo "yaffs1 image: ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs1 ..."
-			${TOOL_PATH} ${IMG_RFS_PATH} ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs1 > /dev/null
-			chmod 0644 ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs1
+			echo "yaffs1 image: ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs1 ..."
+			${TOOL_PATH} ${IMG_RFS_PATH} ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs1 > /dev/null
+			chmod 0644 ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs1
 			echo " OK."
 			;;	
 		*mkyaffs2image)
-			echo -n "yaffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs2 ..."
-			${TOOL_PATH} ${IMG_RFS_PATH} ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs2 > /dev/null
-			chmod 0644 ${IMAGES_PATH}/${IMAGE_PREFIX}.yaffs2
+			echo -n "yaffs2 image: ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs2 ..."
+			${TOOL_PATH} ${IMG_RFS_PATH} ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs2 > /dev/null
+			chmod 0644 ${IMAGE_PATH}/${IMAGE_PREFIX}.yaffs2
 			echo " OK."
 			;;
 		*mkfs.jffs2)
-			echo -n "jffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}_l.jffs2 ..."
-			sudo ${TOOL_PATH} -r ${IMG_RFS_PATH} -s 2048 -e 0x20000 -l -p -n -o ${IMAGES_PATH}/${IMAGE_PREFIX}_l.jffs2
+			echo -n "jffs2 image: ${IMAGE_PATH}/${IMAGE_PREFIX}_l.jffs2 ..."
+			sudo ${TOOL_PATH} -r ${IMG_RFS_PATH} -s 2048 -e 0x20000 -l -p -n -o ${IMAGE_PATH}/${IMAGE_PREFIX}_l.jffs2
 			echo " OK."
-			echo -n "jffs2 image: ${IMAGES_PATH}/${IMAGE_PREFIX}_s.jffs2 ..."
-			${TOOL_PATH} -r ${IMG_RFS_PATH} -s 512 -e 0x4000 -l -p -n -o ${IMAGES_PATH}/${IMAGE_PREFIX}_s.jffs2
+			echo -n "jffs2 image: ${IMAGE_PATH}/${IMAGE_PREFIX}_s.jffs2 ..."
+			${TOOL_PATH} -r ${IMG_RFS_PATH} -s 512 -e 0x4000 -l -p -n -o ${IMAGE_PATH}/${IMAGE_PREFIX}_s.jffs2
 			echo " OK."
 			;;	
 		*mkfs.cramfs)
-			echo -n "cramfs image: ${IMAGES_PATH}/${IMAGE_PREFIX}.cramfs ..."
-			${TOOL_PATH} -b 512 ${IMG_RFS_PATH} ${IMAGES_PATH}/${IMAGE_PREFIX}.cramfs 2>/dev/null
+			echo -n "cramfs image: ${IMAGE_PATH}/${IMAGE_PREFIX}.cramfs ..."
+			${TOOL_PATH} -b 512 ${IMG_RFS_PATH} ${IMAGE_PATH}/${IMAGE_PREFIX}.cramfs 2>/dev/null
 			echo " OK."
 			;;
 		*cpio)
-			echo -n "ramdisk image: ${IMAGES_PATH}/${IMAGE_PREFIX}.rd ..."
-			cd ${IMG_RFS_PATH} && find | ${TOOL_PATH} -o -H newc 2> /dev/null | gzip -9 > ${IMAGES_PATH}/${IMAGE_PREFIX}.rd
+			echo -n "ramdisk image: ${IMAGE_PATH}/${IMAGE_PREFIX}.rd ..."
+			cd ${IMG_RFS_PATH} && find | ${TOOL_PATH} -o -H newc 2> /dev/null | gzip -9 > ${IMAGE_PATH}/${IMAGE_PREFIX}.rd
 			echo " OK."
 			;;
 		*)
@@ -268,47 +265,65 @@ build_qtopia()
 
 build_linux_kernel()
 {
+	local kernel_config
+
 	KERNEL_TOP="${MW_TOP_DIR}/target/${MWP_KERNEL}"
-	KERN_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- INSTALL_MOD_PATH=${ROOTFS_PATH}"
-	
-	case "${TARGET_SOC}" in
+	KERN_OPT="ARCH=arm CROSS_COMPILE=${TARGET_PLAT}- INSTALL_MOD_PATH=${ROOTFS_PATH} INSTALL_PATH=${IMAGE_PATH}"
+
+	kernel_config="${BOARD_NAME}_defconfig"
+
+	# fixme: use strcasecmp() 
+	case "${BOARD_NAME}" in
+	beagle | evm3530 | devkit8000 | n900)
+		kernel_config="omap2plus_defconfig"
+		;;
+
+	realview)
+		kernel_config="realview_defconfig"
+		;;
+
 	*)
-		TARGET_MACH=realview
+		echo "defconfig for \"${BOARD_NAME}\" not available!"
 		;;
 	esac
 
-	cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
-	
-	if [ -e ${KERNEL_TOP}/${TARGET_MACH}_defconfig ]; then
-		cp -v ${KERNEL_TOP}/${TARGET_MACH}_defconfig arch/${TARGET_ARCH}/configs/
-	elif [ -e arch/${TARGET_ARCH}/configs/${TARGET_MACH}_defconfig ]; then
+	unpack_to ${MWP_KERNEL} kernel
+	# cd ${KERNEL_BUILD_PATH}/${MWP_KERNEL}
+
+	if [ -e ${KERNEL_TOP}/${kernel_config} ]; then
+		cp -v ${KERNEL_TOP}/${kernel_config} arch/${TARGET_ARCH}/configs/
+	elif [ -e arch/${TARGET_ARCH}/configs/${kernel_config} ]; then
 		sed -i -e 's/# CONFIG_AEABI.*/CONFIG_AEABI=y/' \
 			-e '/CONFIG_OABI_COMPAT/d' \
 			-e '/CONFIG_AEABI/a\# CONFIG_OABI_COMPAT is not set/' \
 			-e 's/\(CONFIG_SYSFS_DEPRECATED.*\)=y/# \1 is not set/' \
-			arch/${TARGET_ARCH}/configs/${TARGET_MACH}_defconfig
+			arch/${TARGET_ARCH}/configs/${kernel_config}
 	else
-		echo "${TARGET_MACH}: no corresponding kernel configuration found!"
+		echo "${BOARD_NAME}: no corresponding kernel configuration found!"
 		exit 1
 	fi
 	
-	make ${KERN_OPT} ${TARGET_MACH}_defconfig
-	
-	make ${KERN_OPT} ${BUILD_JOBS} && \
-	make ${KERN_OPT} modules_install ||  exit 1
+	#make ${KERN_OPT} ${kernel_config} && \
+	#make ${KERN_OPT} ${BUILD_JOBS} && \
+	make ${KERN_OPT} modules_install && \
+	make ${KERN_OPT} install || exit 1
 	echo
 	
+	# fixme!!!
+	cp -v arch/${TARGET_ARCH}/boot/zImage ${IMAGE_PATH}
+	return
+
 	case "${TARGET_ARCH}" in
 	x86 | i386 | x86_64)
-		cp -v ${PWD}/arch/${TARGET_ARCH}/boot/bzImage ${IMAGES_PATH}/bzImage.${TARGET_MACH}
+		cp -v ${PWD}/arch/${TARGET_ARCH}/boot/bzImage ${IMAGE_PATH}/bzImage.${BOARD_NAME}
 		;;
 	
 	mips*)
-		cp vmlinux ${IMAGES_PATH}/vmlinux.${TARGET_MACH}
+		cp vmlinux ${IMAGE_PATH}/vmlinux.${BOARD_NAME}
 		;;
 	
 	*)
-		cp arch/${TARGET_ARCH}/boot/zImage ${IMAGES_PATH}/zImage.${TARGET_MACH}
+		cp arch/${TARGET_ARCH}/boot/zImage ${IMAGE_PATH}/zImage.${BOARD_NAME}
 		;;
 	esac
 }

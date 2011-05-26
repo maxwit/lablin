@@ -1,26 +1,22 @@
 #!/bin/sh
 #
-# http://maxwit.googlecode.com
-#
-# Authors:
-#     Conke Hu   <conke@maxwit.com>
-#     Tiger Yu   <tiger@maxwit.com>
-#     Fleya Hou  <fleya@maxwit.com>
+# http://maxwit.github.com
 #
 
+# CPU: armv4/arm9, armv5/arm9e, armv6/arm11, armv7/cortex-a
+# SoC/Plat
+# Board/Machine
 
-MAXWIT_TOP=/maxwit
-
-LABLIN_TOP=${MAXWIT_TOP}/lablin
 SRC_PATH=${MAXWIT_TOP}/source
-
+BUILD_PATH=${LABLIN_TOP}/build
 ROOTFS_PATH=${LABLIN_TOP}/rootfs
-TOOLCHAIN_PATH=${LABLIN_TOP}/toolchain
-BUILD_PATH=${LABLIN_TOP}/build/labin
-IMAGES_PATH=${LABLIN_TOP}/images
+IMAGE_PATH=${LABLIN_TOP}/image
 
 # host utils
 UTILS_ROOT=${LABLIN_TOP}/utils
+
+TOOLCHAIN_PATH=`which arm-linux-gcc`
+TOOLCHAIN_PATH=${TOOLCHAIN_PATH%%/usr/bin/arm-linux-gcc}
 
 # sub dirs in $BUILD_PATH
 UTILS_BUILD_PATH=${BUILD_PATH}/host
@@ -43,7 +39,7 @@ fi
 
 
 # fixme: prompt
-TARGET_SOC="AT91SAM9263"
+TARGET_SOC="OMAP3530"
 
 case "${TARGET_SOC}" in
 	S3C2410 | S3C2440)
@@ -124,7 +120,7 @@ unpack_to()
 	local cat="${2}"
 	local upkg=""
 
-	mkdir -p ${BUILD_PATH}/${cat} && \
+	mkdir -vp ${BUILD_PATH}/${cat} && \
 	cd ${BUILD_PATH}/${cat}
 
 	case "${pkg}" in

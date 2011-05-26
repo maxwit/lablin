@@ -12,9 +12,14 @@
 #
 
 
+BOARD_NAME="beagle"
+
 MW_TOP_DIR=`dirname $0`
 cd ${MW_TOP_DIR}
 MW_TOP_DIR=${PWD}
+
+MAXWIT_TOP=/maxwit
+LABLIN_TOP=${MAXWIT_TOP}/target/${BOARD_NAME}
 
 
 . core/bmw_menu
@@ -24,7 +29,7 @@ MW_TOP_DIR=${PWD}
 . target/build
 
 
-BUILD_JOBS="-j1"
+BUILD_JOBS="-j2"
 
 
 echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
@@ -41,7 +46,7 @@ if [ "${1}" == "all" ]; then
 
 	mkdir -vp ${BUILD_PATH}
 	mkdir -vp ${ROOTFS_PATH}
-	mkdir -vp ${IMAGES_PATH}
+	mkdir -vp ${IMAGE_PATH}
 	mkdir -vp ${UTILS_BUILD_PATH}
 	mkdir -vp ${TOOLCHAIN_BUILD_PATH}
 	mkdir -vp ${KERNEL_BUILD_PATH}
@@ -62,7 +67,7 @@ fi
 
 mkdir -vp ${BUILD_PATH}
 mkdir -vp ${ROOTFS_PATH}
-mkdir -vp ${IMAGES_PATH}
+mkdir -vp ${IMAGE_PATH}
 mkdir -vp ${UTILS_BUILD_PATH}
 mkdir -vp ${TOOLCHAIN_BUILD_PATH}
 mkdir -vp ${KERNEL_BUILD_PATH}
