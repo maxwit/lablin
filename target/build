@@ -39,13 +39,10 @@ build_basic_rootfs()
 	done
 
 	# fixme
+	cp -a ${TOOLCHAIN_PATH}/lib/*.so* lib/
+	cp -a ${TOOLCHAIN_PATH}/usr/lib/*.so* usr/lib/
 	cp -a ${TOOLCHAIN_PATH}/usr/${TARGET_PLAT}/lib/*.so* lib/
 	echo -n "."
-
-	# cp -a ${ROOTFS_PATH}/lib/*.so* lib/
-	# cp -a ${ROOTFS_PATH}/usr/${TARGET_PLAT}/lib/*.so* usr/lib/
-	# cp -a ${ROOTFS_PATH}/usr/lib/*.so* usr/lib/
-	# echo -n "."
 
 	if [ ${USER} = root ]; then
 		[ -e ${ROOTFS_PATH}/dev/console ] || \
@@ -133,7 +130,6 @@ run_qemu()
 		do
 			if [ x"${str}" != x ]; then
 				QEMU_HOST_IP=${str};
-				QEMU_HOST_IP=${str}0;
 			fi
 		done
 	fi
@@ -147,6 +143,7 @@ create_image()
 	local IMAGE_PREFIX=rootfs
 	local IMG_RFS_PATH=${MAXWIT_TOP}/rootfs_final
 
+	rm -rf ${IMG_RFS_PATH}
 	cp -av ${ROOTFS_PATH} ${IMG_RFS_PATH}
 
 	cd ${IMG_RFS_PATH}

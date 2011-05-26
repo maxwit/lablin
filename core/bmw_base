@@ -13,7 +13,8 @@ SRC_PATH=/maxwit/source
 
 MAXWIT_TOP=/maxwit/lablin
 ROOTFS_PATH=${MAXWIT_TOP}/rootfs
-TOOLCHAIN_PATH=${MAXWIT_TOP}/toolchain
+TOOLCHAIN_PATH=`which arm-linux-gcc`
+TOOLCHAIN_PATH=${TOOLCHAIN_PATH%%/usr/bin/arm-linux-gcc}
 BUILD_PATH=${MAXWIT_TOP}/build
 IMAGES_PATH=${MAXWIT_TOP}/images
 
