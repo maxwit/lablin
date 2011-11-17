@@ -49,6 +49,12 @@ case "${TARGET_SOC}" in
 		GCC_CPU_OPT="--with-float=soft --with-arch=armv4t --with-tune=arm920t"
 		;;
 
+	i.MX31)
+		TARGET_ARCH="arm"
+		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		GCC_CPU_OPT="--with-arch=armv6zk --with-tune=arm1136jzf-s"
+		;;
+
 	S3C6400 | S3C6410)
 		TARGET_ARCH="arm"
 		TARGET_PLAT="arm-maxwit-linux-gnueabi"
@@ -328,7 +334,7 @@ build_package()
 	local built_flag=".__lablin_built"
 
 	if [ -f "${srcdir}/${built_flag}" ]; then
-		echo "\"${1}\" has been built."
+		echo "\"${pkg}\" has been built."
 		echo
 		return 0
 	fi
