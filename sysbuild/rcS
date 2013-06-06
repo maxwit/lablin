@@ -3,3 +3,18 @@
 mount -t proc proc /proc
 mount -t sysfs sys /sys
 
+modprobe snd
+modprobe snd_timer
+modprobe soundcore
+modprobe snd_pcm
+modprobe snd_seq
+modprobe snd_seq_device
+modprobe snd_seq_midi
+modprobe snd_seq_midi_event
+modprobe snd_page_alloc
+modprobe snd_hwdep
+modprobe snd_rawmidi
+modprobe snd_hda_codec
+modprobe snd_hda_codec_conexant
+modprobe snd_hda_codec_hdmi
+modprobe snd_hda_intel

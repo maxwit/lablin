@@ -11,9 +11,14 @@ BUILD=/maxwit/build
 ROOTFS="/mnt/2"
 
 BUSYBOX="busybox-1.21.0"
-ALSA_LIB="alsa-lib-1.0.25"
+ALSA_LIB="alsa-lib-1.0.27"
 LINUX="linux-3.8.12"
 MPG123="mpg123-1.15.3"
+
+MACH=`uname -m`
+if [ $MACH = i686 ]; then
+	MACH=i386
+fi
 
 if [ $# != 1 -o ! -e "$1" ]; then
 	echo "usage: $0 <image name>/<device name>"
@@ -99,8 +104,8 @@ sudo mkdir -vp ${ROOTFS}/{usr,lib,home,proc,sys,dev,etc,tmp}
 if [ ! -e "${ROOTFS}/lib/libc.so" ]; then
 	sudo cp -av --parents `find /lib /lib64 -name "*.so*"` $ROOTFS || exit 1
 	# fixme
-	sudo cp -av --parents `ls /usr/lib/x86_64-linux-gnu/*w.so*` $ROOTFS || exit 1
-	sudo cp -av --parents `ls /usr/lib/x86_64-linux-gnu/libltdl.so*` ${ROOTFS}
+	sudo cp -av --parents `ls /usr/lib/$MACH-linux-gnu/*w.so*` $ROOTFS || exit 1
+	sudo cp -av --parents `ls /usr/lib/$MACH-linux-gnu/libltdl.so*` ${ROOTFS}
 fi
 
 if [ ! -e "${ROOTFS}/sbin/init" ]; then
@@ -108,7 +113,7 @@ if [ ! -e "${ROOTFS}/sbin/init" ]; then
 	tar xf $SOURCE/${BUSYBOX}.tar.bz2
 	cd ${BUSYBOX}
 	make defconfig > /dev/null
-	make 
+	make
 	sudo make CONFIG_PREFIX=$ROOTFS install
 fi
 
@@ -118,30 +123,31 @@ if [ ! -e "${ROOTFS}/etc/init.d/rcS" ]; then
 	sudo touch ${ROOTFS}/etc/group
 fi
 
-cd $BUILD
-tar xf $SOURCE/${ALSA_LIB}.tar.bz2
-cd ${ALSA_LIB}
-./configure --prefix=/usr
-make 
-sudo make DESTDIR=$ROOTFS install
+sudo cp -av --parents `find /usr/lib -name "libasound*.so*"` $ROOTFS/
+sudo cp -av --parents /usr/share/alsa* $ROOTFS/
 
-sudo cp -av --parents `which alsamixer` $ROOTFS/
+#cd $BUILD
+#tar xf $SOURCE/${ALSA_LIB}.tar.bz2
+#cd ${ALSA_LIB}
+#./configure --prefix=/usr --disable-python
+#make
+#sudo make DESTDIR=$ROOTFS install
+
+sudo cp -av --parents `which aplay` $ROOTFS/
 
 cd $BUILD
 tar xf $SOURCE/$MPG123.tar.bz2
 cd $MPG123
-./configure --prefix=/usr --with-alsa && \
+./configure --prefix=/usr --with-audio=alsa && \
 make && \
 sudo make DESTDIR=$ROOTFS install || exit 1
 
-sudo cp -v /maxwit/document/appdevel/src/audio/play ${ROOTFS}
 sudo cp -v /maxwit/document/appdevel/src/audio/mixer/mixer ${ROOTFS}
 sudo cp -v /usr/share/sounds/alsa/Front_Right.wav ${ROOTFS}
-sudo cp -v /maxwit/multimedia/music/young.mp3 ${ROOTFS}
 
 sync && sudo umount /mnt/2
 
 if [ $ISIMG == 1 ]; then
 	sudo losetup -d $DEV $DEV2
-	qemu-system-x86_64 $IMG -soundhw hda
+	qemu-system-$MACH $IMG -soundhw hda
 fi
