@@ -1,0 +1,4 @@
+ver = 1.0.27
+cmd = wget -c
+url = ftp://ftp.alsa-project.org/pub/lib/
+ext = tar.bz2

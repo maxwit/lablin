@@ -1,0 +1,135 @@
+From 8b217ba2f1bfde4c1fb1795b738bfdc0fb183ab3 Mon Sep 17 00:00:00 2001
+From: Conke Hu <conke.hu@maxwit.com>
+Date: Sun, 12 May 2013 16:56:35 +0800
+Subject: [PATCH] support g-bios
+
+Signed-off-by: Conke Hu <conke.hu@maxwit.com>
+---
+ Makefile      |  2 +-
+ include/fat.h |  5 -----
+ lib/board.c   | 43 ++++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 37 insertions(+), 13 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 955d1fe..a1982ce 100644
+--- a/Makefile
++++ b/Makefile
+@@ -53,7 +53,7 @@ export	ARCH CPU BOARD VENDOR
+ include $(TOPDIR)/config.mk
+ 
+ ifndef CROSS_COMPILE
+-CROSS_COMPILE = arm-none-linux-gnueabi-
++CROSS_COMPILE = arm-linux-
+ #CROSS_COMPILE = arm-linux-
+ export	CROSS_COMPILE
+ endif
+diff --git a/include/fat.h b/include/fat.h
+index 6b12df5..3249d60 100644
+--- a/include/fat.h
++++ b/include/fat.h
+@@ -199,11 +199,6 @@ struct filesystem {
+ 	const char	    name[12];
+ };
+ 
+-/* FAT tables */
+-file_detectfs_func	file_fat_detectfs;
+-file_ls_func		file_fat_ls;
+-file_read_func		file_fat_read;
+-
+ /* Currently this doesn't check if the dir exists or is valid... */
+ int file_cd(const char *path);
+ int file_fat_detectfs(void);
+diff --git a/lib/board.c b/lib/board.c
+index 70cd17a..02f4059 100644
+--- a/lib/board.c
++++ b/lib/board.c
+@@ -56,7 +56,7 @@ static int init_func_i2c (void)
+ 	return 0;
+ }
+ 
+-typedef int (init_fnc_t) (void);
++typedef int (init_fnc_t)();
+ 
+ init_fnc_t *init_sequence[] = {
+ 	cpu_init,		/* basic cpu dependent setup */
+@@ -96,13 +96,42 @@ void start_armboot (void)
+ #ifdef CONFIG_MMC
+ 	/* first try mmc */
+ 	if (mmc_init(1)) {
+-		size = file_fat_read("u-boot.bin", buf, 0);
++#if 1
++		int i;
++		const char *fn[] = {"g-bios.bin", "board.inf"};
++
++		for (i = 0, size = 0; i < sizeof(fn) / sizeof(fn[0]); i++) {
++			buf += size;
++
++			size = file_fat_read(fn[i], buf, 0);
++			if (size < 0) {
++#ifdef CFG_PRINTF
++				printf("Fail to load %s from mmc\n", fn[i]);
++#endif
++				return size;
++			}
++
++#ifdef CFG_PRINTF
++			printf("Loading %s from mmc to 0x%p\n", fn[i], buf);
++#endif
++		}
++#else
++		size = file_fat_read("g-bios.bin", buf, 0);
++		if (size > 0) {
++#ifdef CFG_PRINTF
++			printf("Loading g-bios.bin from mmc\n");
++#endif
++			buf += size;
++		}
++
++		size = file_fat_read("board.inf", buf, 0);
+ 		if (size > 0) {
+ #ifdef CFG_PRINTF
+-			printf("Loading u-boot.bin from mmc\n");
++			printf("Loading board.inf from mmc\n");
+ #endif
+ 			buf += size;
+ 		}
++#endif
+ 	}
+ #endif
+ 
+@@ -111,7 +140,7 @@ void start_armboot (void)
+ 		if (get_mem_type() == GPMC_ONENAND){
+ #ifdef CFG_ONENAND
+ #ifdef CFG_PRINTF
+-       			printf("Loading u-boot.bin from onenand\n");
++       			printf("Loading g-bios.bin from onenand\n");
+ #endif
+         		for (i = ONENAND_START_BLOCK; i < ONENAND_END_BLOCK; i++){
+         			if (!onenand_read_block(buf, i))
+@@ -121,7 +150,7 @@ void start_armboot (void)
+ 		} else if (get_mem_type() == GPMC_NAND){
+ #ifdef CFG_NAND_K9F1G08R0A
+ #ifdef CFG_PRINTF
+-       			printf("Loading u-boot.bin from nand\n");
++       			printf("Loading g-bios.bin from nand\n");
+ #endif
+         		for (i = NAND_UBOOT_START; i < NAND_UBOOT_END; i+= NAND_BLOCK_SIZE){
+         			if (!nand_read_block(buf, i))
+@@ -137,12 +166,12 @@ void start_armboot (void)
+          */
+ 	first_instruction = (int *)CFG_LOADADDR;
+ 	if((buf == (uchar *)CFG_LOADADDR) || (*first_instruction == 0xffffffff)) {
+-		printf("u-boot.bin not found or blank nand contents - attempting serial boot . . .\n");
++		printf("g-bios.bin not found or blank nand contents - attempting serial boot . . .\n");
+ 		do_load_serial_bin(CFG_LOADADDR, 115200);
+ 	}
+ 
+ 	/* go run U-Boot and never return */
+- 	((init_fnc_t *)CFG_LOADADDR)();
++ 	((void (*)(void *, int))CFG_LOADADDR)(buf, size);
+ 
+ 	/* should never come here */
+ }
+-- 
+1.8.1.2
+

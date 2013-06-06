@@ -6,9 +6,8 @@
 # http://maxwit.googlecode.com
 #
 # Authors:
-#     Tiger Yu   <tiger@maxwit.com>
-#     Conke Hu   <conke@maxwit.com>
-#     Fleya Hou  <fleya@maxwit.com>
+#     Tiger Yu   <tiger.yu@maxwit.com>
+#     Conke Hu   <conke.hu@maxwit.com>
 #
 
 
@@ -102,13 +101,13 @@ build_root_std()
 run_qemu()
 {
 	QEMU_CONSOLE=0
-	QEMU_MACH="realview"
+	QEMU_MACH="beagle"
 	QEMU_HOST_IP=10.0.0.1
 	QEMU_MACH_IP=10.0.0.10
 
 	if [ x"${QEMU_CONSOLE}" != x"1" ]; then
 		EXTRA_QEMU_OPT="-serial stdio"
-		EXTRA_COMMAND_LINE="console=ttyAMA0" # fixme
+		EXTRA_COMMAND_LINE="console=ttyO0" # fixme
 	fi
 
 	# fixme
@@ -121,7 +120,7 @@ run_qemu()
 		done
 	fi
 
-	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH}-eb -kernel ${IMAGE_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log
+	sudo qemu-system-${TARGET_ARCH} -M ${QEMU_MACH} -kernel ${IMAGE_PATH}/zImage.${QEMU_MACH} -net nic -net tap ${EXTRA_QEMU_OPT} -append "root=/dev/nfs rw nfsroot=${QEMU_HOST_IP}:${ROOTFS_PATH} ip=${QEMU_MACH_IP}:${QEMU_HOST_IP}:${QEMU_HOST_IP}:255.255.255.0:maxwit.googlecode.com:eth0:off ${EXTRA_COMMAND_LINE}" | tee /tmp/log
 }
 
 
@@ -203,13 +202,14 @@ create_image()
 	done
 }
 
+#${MWP_ALSA_UTILS} \
+
 
 build_all_app()
 {
     ## FIXME! qtopia conflicts with libpng
 	for pkg in \
 		${MWP_TSLIB} \
-		${MWP_ALSA_UTILS} \
 		${MWP_ALSA_LIB} \
 		${MWP_MADPLAY} \
 		${MWP_LIBMAD} \

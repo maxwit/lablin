@@ -28,12 +28,9 @@ LABLIN_TOP=${MAXWIT_TOP}/target/${BOARD_NAME}
 
 . target/build
 
-
 BUILD_JOBS="-j2"
 
-
-echo ${PATH} | grep "${UTILS_ROOT}" > /dev/null || export PATH=${UTILS_ROOT}/usr/bin:${PATH}
-export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
+#export LD_LIBRARY_PATH=${UTILS_ROOT}/usr/lib
 export PKG_CONFIG_PATH=${ROOTFS_PATH}/usr/lib/pkgconfig/
 
 
@@ -76,7 +73,7 @@ mkdir -vp ${APP_BUILD_PATH}
 while true
 do
 	show_menu "[MaxWit Lablin Building Menu] (for ${TARGET_SOC})" \
-			"Build Basic System (${MWP_KERNEL} & busybox)" \
+			"Build Basic System (${MWP_KERNEL} & libc & busybox & udev)" \
 			"Build Applications (Lib/App/Games)" \
 			"Build Qtopia" \
 			"Testing on QEMU" \

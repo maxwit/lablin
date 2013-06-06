@@ -12,9 +12,6 @@ BUILD_PATH=${LABLIN_TOP}/build
 ROOTFS_PATH=${LABLIN_TOP}/rootfs
 IMAGE_PATH=${LABLIN_TOP}/image
 
-# host utils
-UTILS_ROOT=${LABLIN_TOP}/utils
-
 TOOLCHAIN_PATH=`which arm-linux-gcc`
 TOOLCHAIN_PATH=${TOOLCHAIN_PATH%%/usr/bin/arm-linux-gcc}
 
@@ -44,56 +41,48 @@ TARGET_SOC="OMAP3530"
 case "${TARGET_SOC}" in
 	S3C2410 | S3C2440)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		TARGET_PLAT="arm-linux"
 		BU_CPU_OPT="--with-float=soft"
-		GCC_CPU_OPT="--with-float=soft --with-arch=armv4t --with-tune=arm920t"
 		;;
 
 	i.MX31)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
-		GCC_CPU_OPT="--with-arch=armv6zk --with-tune=arm1136jzf-s"
+		TARGET_PLAT="arm-linux"
 		;;
 
 	S3C6400 | S3C6410)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
-		GCC_CPU_OPT="--with-arch=armv6zk --with-tune=arm1176jzf-s"
+		TARGET_PLAT="arm-linux"
 		;;
 
 	AT91SAM9261 | AT91SAM9263)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		TARGET_PLAT="arm-linux"
 		BU_CPU_OPT="--with-float=soft"
-		GCC_CPU_OPT="--with-float=soft --with-arch=armv5te --with-tune=arm926ej-s"
 		;;
 
 	# fixme
 	PXA168 | PXA910)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
+		TARGET_PLAT="arm-linux"
 		BU_CPU_OPT="--with-float=soft"
-		GCC_CPU_OPT="--with-float=soft --with-arch=armv5te --with-tune=arm926ej-s"
 		;;
 
 	OMAP3430 | OMAP3530)
 		TARGET_ARCH="arm"
-		TARGET_PLAT="arm-maxwit-linux-gnueabi"
-		GCC_CPU_OPT="--with-arch=armv7-a --with-tune=cortex-a8"
+		TARGET_PLAT="arm-linux"
 		;;
 
 	malta)
 		TARGET_ARCH="mips"
 		QEMU_ARCH="mipsel"
 		TARGET_PLAT="mipsel-maxwit-linux-gnu"
-		GCC_CPU_OPT="--with-abi=32 --with-tune=mips32r2"
 		;;
 
 	loongson2f)
 		TARGET_ARCH="mips"
 		QEMU_ARCH="mips64el"
 		TARGET_PLAT="mips64el-maxwit-linux-gnu"
-		GCC_CPU_OPT="--with-abi=64 --with-tune=loongson2f"
 		BU_CPU_OPT="--enable-64-bit-bfd"
 		GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc -mabi=64"
 		;;
@@ -105,8 +94,6 @@ case "${TARGET_SOC}" in
 esac
 
 export ROOTFS_PATH TOOLCHAIN_PATH BUILD_PLAT TARGET_PLAT
-# fixme
-export UTILS_ROOT GCC_CPU_OPT
 
 [ -z "${GLIBC_BUILDING_GCC}" ] && export GLIBC_BUILDING_GCC="${TARGET_PLAT}-gcc" # fixme
 [ -z "${QEMU_ARCH}" ] && QEMU_ARCH=${TARGET_ARCH}
