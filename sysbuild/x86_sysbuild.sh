@@ -38,13 +38,13 @@ else
 	exit 1
 fi
 
-if [ $ISIMG == 1 ]; then
+if [ $ISIMG = 1 ]; then
 	fdisk $IMG < $TOP_DIR/fdisk.cmd
 
 	sudo losetup -f $IMG
 
 	OFF1SEC=`fdisk -l "$IMG" | grep "${IMG}2" | awk {'printf $2'}`
-	if [ "$OFF1SEC" == "*" ]; then
+	if [ "$OFF1SEC" = "*" ]; then
 		OFF1SEC=`fdisk -l "$IMG" | grep "${IMG}2" | awk {'printf $3'}`
 	fi
 	OFF1BYTE=$((OFF1SEC*512))
@@ -75,7 +75,7 @@ sudo mkdir -vp $ROOTFS
 sudo mount $DEV2 $ROOTFS
 
 if [ ! -d "${BOOT}/grub" ]; then
-	if [ $ISIMG == 1 ]; then
+	if [ $ISIMG = 1 ]; then
 		GRUB_OPT="--modules=part_msdos"
 	fi
 
@@ -123,15 +123,15 @@ if [ ! -e "${ROOTFS}/etc/init.d/rcS" ]; then
 	sudo touch ${ROOTFS}/etc/group
 fi
 
-sudo cp -av --parents `find /usr/lib -name "libasound*.so*"` $ROOTFS/
-sudo cp -av --parents /usr/share/alsa* $ROOTFS/
+#sudo cp -av --parents `find /usr/lib -name "libasound*.so*"` $ROOTFS/
+#sudo cp -av --parents /usr/share/alsa* $ROOTFS/
 
-#cd $BUILD
-#tar xf $SOURCE/${ALSA_LIB}.tar.bz2
-#cd ${ALSA_LIB}
-#./configure --prefix=/usr --disable-python
-#make
-#sudo make DESTDIR=$ROOTFS install
+cd $BUILD
+tar xf $SOURCE/${ALSA_LIB}.tar.bz2
+cd ${ALSA_LIB}
+./configure --prefix=/usr --disable-python
+make
+sudo make DESTDIR=$ROOTFS install
 
 sudo cp -av --parents `which aplay` $ROOTFS/
 
@@ -147,7 +147,7 @@ sudo cp -v /usr/share/sounds/alsa/Front_Right.wav ${ROOTFS}
 
 sync && sudo umount /mnt/2
 
-if [ $ISIMG == 1 ]; then
+if [ $ISIMG = 1 ]; then
 	sudo losetup -d $DEV $DEV2
-	qemu-system-$MACH $IMG -soundhw hda
+	qemu-system-$MACH $IMG -soundhw ac97
 fi
