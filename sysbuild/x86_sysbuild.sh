@@ -11,7 +11,7 @@ BUILD=/maxwit/build
 ROOTFS="/mnt/2"
 
 BUSYBOX="busybox-1.21.0"
-ALSA_LIB="alsa-lib-1.0.27"
+ALSA_LIB="alsa-lib-1.0.25"
 LINUX="linux-3.8.12"
 MPG123="mpg123-1.15.3"
 
