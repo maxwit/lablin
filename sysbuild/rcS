@@ -11,3 +11,7 @@ modprobe snd_pcm
 modprobe snd_seq_device
 modprobe snd_seq
 modprobe snd_hwdep
+# AC'97
+modprobe ac97_bus
+modprobe snd-ac97-codec
+modprobe snd-intel8x0
