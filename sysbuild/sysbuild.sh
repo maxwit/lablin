@@ -14,6 +14,7 @@ ROOTFS=$IMG_DIR/rootfs
 
 # package list
 LINUX=linux-3.5.4
+BUSYBOX=busybox-1.21.0
 
 if [ $# != 1 -o ! -e "$1" ]; then
 	echo "usage: $0 <image name>/<device name>"
@@ -63,7 +64,7 @@ fi
 if [ ! -f "${ROOTFS}/boot/uImage" ]; then
 	echo "building $LINUX ..."
 
-	if [ ! -d "$BUILD/$LINUX" ] && [ ! -f "$SOURCE/$LINUX.tar.xz" ]; then
+	if [ ! -f "$SOURCE/$LINUX.tar.xz" ]; then
 		wget -c http://www.kernel.org/pub/linux/kernel/v3.x/$LINUX.tar.xz -P $SOURCE
 	fi
 
@@ -91,11 +92,11 @@ if [ ! -e "${ROOTFS}/lib/libc.so" ]; then
 fi
 
 if [ ! -e "${ROOTFS}/sbin/init" ]; then
-	if [ ! -d "$BUILD/busybox" ]; then
-		git clone git://busybox.net/busybox.git $BUILD/busybox || exit 1
+	if [ ! -d "$BUILD/$BUSYBOX" ]; then
+		tar xvf $SOURCE/$BUSYBOX.tar.bz2 -C $BUILD
 	fi
 
-	cd $BUILD/busybox
+	cd $BUILD/$BUSYBOX
 	make ARCH=arm defconfig
 	make ARCH=arm CROSS_COMPILE=arm-linux-
 	make ARCH=arm CROSS_COMPILE=arm-linux- CONFIG_PREFIX=$ROOTFS install
@@ -162,4 +163,4 @@ if [ $ISIMG == 1 ]; then
 	sudo losetup -d $DEV0 $DEV1 $DEV2
 fi
 
- sudo qemu-system-arm -M beagle -sd ${IMG} -serial stdio #-net nic -net tap
+sudo qemu-system-arm -M beagle -sd ${IMG} -serial stdio #-net nic -net tap
