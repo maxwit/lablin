@@ -12,14 +12,14 @@
 #
 
 
-BOARD_NAME="beagle"
+BOARD_NAME="armv7"
 
 MW_TOP_DIR=`dirname $0`
 cd ${MW_TOP_DIR}
 MW_TOP_DIR=${PWD}
 
 MAXWIT_TOP=/maxwit
-LABLIN_TOP=${MAXWIT_TOP}/target/${BOARD_NAME}
+LABLIN_TOP=${MAXWIT_TOP}/image/${BOARD_NAME}
 
 
 . core/bmw_menu
@@ -44,7 +44,6 @@ if [ "${1}" == "all" ]; then
 	mkdir -vp ${BUILD_PATH}
 	mkdir -vp ${ROOTFS_PATH}
 	mkdir -vp ${IMAGE_PATH}
-	mkdir -vp ${UTILS_BUILD_PATH}
 	mkdir -vp ${TOOLCHAIN_BUILD_PATH}
 	mkdir -vp ${KERNEL_BUILD_PATH}
 	mkdir -vp ${APP_BUILD_PATH}
@@ -65,7 +64,6 @@ fi
 mkdir -vp ${BUILD_PATH}
 mkdir -vp ${ROOTFS_PATH}
 mkdir -vp ${IMAGE_PATH}
-mkdir -vp ${UTILS_BUILD_PATH}
 mkdir -vp ${TOOLCHAIN_BUILD_PATH}
 mkdir -vp ${KERNEL_BUILD_PATH}
 mkdir -vp ${APP_BUILD_PATH}

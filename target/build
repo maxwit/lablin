@@ -202,7 +202,9 @@ create_image()
 	done
 }
 
-#${MWP_ALSA_UTILS} \
+#		${MWP_ALSA_UTILS} \
+#		${MWP_MADPLAY} \
+#		${MWP_FBV} \
 
 
 build_all_app()
@@ -211,14 +213,12 @@ build_all_app()
 	for pkg in \
 		${MWP_TSLIB} \
 		${MWP_ALSA_LIB} \
-		${MWP_MADPLAY} \
 		${MWP_LIBMAD} \
 		${MWP_LIBID3TAG} \
 		${MWP_MPG123} \
 		${MWP_FAAD2} \
 		${MWP_JPEG} \
 		${MWP_LIBUNGIF} \
-		${MWP_FBV} \
 		${MWP_TIFF} \
 		${MWP_FREETYPE}  \
 		${MWP_DFB} \
