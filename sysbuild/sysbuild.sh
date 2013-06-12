@@ -36,30 +36,31 @@ fi
 mkdir -vp ${BOOT} ${ROOTFS}/boot
 
 if [ ! -f "${BOOT}/MLO" ]; then
-	if [ ! -d "$BUILD/x-load" ]; then
-		git clone git://gitorious.org/x-load-omap3/mainline.git $BUILD/x-load
+	if [ ! -d "$BUILD/u-boot" ]; then
+		#git clone git://gitorious.org/x-load-omap3/mainline.git $BUILD/x-load
+		git clone git://git.denx.de/u-boot.git
 	fi
-	cd $BUILD/x-load
-	patch -p1 < ${TOP_DIR}/0001-support-g-bios.patch
-	make omap3530beagle_config
-	make CROSS_COMPILE=arm-linux-
-	make CROSS_COMPILE=arm-linux- ift
-	cp $BUILD/x-load/MLO ${BOOT}/ -v
+	cd $BUILD/u-boot
+	#patch -p1 < ${TOP_DIR}/0001-support-g-bios.patch
+	make omap3_beagle_config
+	make ARCH=arm CROSS_COMPILE=arm-linux-
+	#make CROSS_COMPILE=arm-linux- ift
+	cp MLO u-boot.img ${BOOT}/ -v
 fi
 
-if [ ! -f "${BOOT}/g-bios.bin" ]; then
-	if [ ! -d "$BUILD/g-bios" ]; then
-		git clone git://github.com/maxwit/g-bios.git $BUILD/g-bios
-	fi
+#if [ ! -f "${BOOT}/g-bios.bin" ]; then
+#	if [ ! -d "$BUILD/g-bios" ]; then
+#		git clone git://github.com/maxwit/g-bios.git $BUILD/g-bios
+#	fi
 
-	cd $BUILD/g-bios
-	make clean
-	make devkit8000_defconfig
-	make
-	make DESTDIR=${BOOT} install
-fi
+#	cd $BUILD/g-bios
+#	make clean
+#	make devkit8000_defconfig
+#	make
+#	make DESTDIR=${BOOT} install
+#fi
 
-if [ ! -f "${ROOTFS}/boot/zImage" ]; then
+if [ ! -f "${ROOTFS}/boot/uImage" ]; then
 	echo "building $LINUX ..."
 
 	if [ ! -d "$BUILD/$LINUX" ] && [ ! -f "$SOURCE/$LINUX.tar.xz" ]; then
@@ -70,21 +71,22 @@ if [ ! -f "${ROOTFS}/boot/zImage" ]; then
 		tar xvf $SOURCE/$LINUX.tar.xz -C $BUILD
 	fi
 
-	if [ ! -e "$BUILD/$LINUX/arch/arm/boot/zImage" ]; then
+	if [ ! -e "$BUILD/$LINUX/arch/arm/boot/uImage" ]; then
 		cd $BUILD/$LINUX
 		cp -v $TOP_DIR/omap3_defconfig arch/arm/configs/
 		make ARCH=arm CROSS_COMPILE=arm-linux- omap3_defconfig
 		make ARCH=arm CROSS_COMPILE=arm-linux-
+		make ARCH=arm CROSS_COMPILE=arm-linux- uImage
 		make ARCH=arm CROSS_COMPILE=arm-linux- INSTALL_MOD_PATH=$ROOTFS modules_install
 	fi
 
-	cp $BUILD/$LINUX/arch/arm/boot/zImage ${ROOTFS}/boot/ -v
+	cp $BUILD/$LINUX/arch/arm/boot/uImage ${ROOTFS}/boot/ -v
 fi
 
 mkdir -vp ${ROOTFS}/{usr,lib,home,proc,sys,dev,etc,tmp}
 
 if [ ! -e "${ROOTFS}/lib/libc.so" ]; then
-	cd /maxwit/target/cortex-a9/rootfs/
+	cd /maxwit/toolchain/cortex-a9/
 	cp -av --parents `find -name "*.so*"` $ROOTFS
 fi
 
@@ -160,4 +162,4 @@ if [ $ISIMG == 1 ]; then
 	sudo losetup -d $DEV0 $DEV1 $DEV2
 fi
 
-# sudo qemu-system-arm -M beagle -sd ${IMG} -serial stdio #-net nic -net tap
+ sudo qemu-system-arm -M beagle -sd ${IMG} -serial stdio #-net nic -net tap
