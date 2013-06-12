@@ -72,16 +72,17 @@ if [ ! -f "${ROOTFS}/boot/uImage" ]; then
 		tar xvf $SOURCE/$LINUX.tar.xz -C $BUILD
 	fi
 
-	if [ ! -e "$BUILD/$LINUX/arch/arm/boot/uImage" ]; then
-		cd $BUILD/$LINUX
+	cd $BUILD/$LINUX
+
+	if [ ! -e "arch/arm/boot/uImage" ]; then
 		cp -v $TOP_DIR/omap3_defconfig arch/arm/configs/
 		make ARCH=arm CROSS_COMPILE=arm-linux- omap3_defconfig
 		make ARCH=arm CROSS_COMPILE=arm-linux-
 		make ARCH=arm CROSS_COMPILE=arm-linux- uImage
-		make ARCH=arm CROSS_COMPILE=arm-linux- INSTALL_MOD_PATH=$ROOTFS modules_install
 	fi
 
-	cp $BUILD/$LINUX/arch/arm/boot/uImage ${ROOTFS}/boot/ -v
+	cp arch/arm/boot/uImage ${ROOTFS}/boot/ -v
+	make ARCH=arm CROSS_COMPILE=arm-linux- INSTALL_MOD_PATH=$ROOTFS modules_install
 fi
 
 mkdir -vp ${ROOTFS}/{usr,lib,home,proc,sys,dev,etc,tmp}
